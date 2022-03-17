@@ -1,0 +1,5 @@
+{
+    "require": {
+        "mangopay/php-sdk-v2": "^3.10"
+    }
+}
