@@ -1,0 +1,138 @@
+  {# Installation des listes #}
+  {% for listName, listTag in listsTags %}
+    <div class="input-group">
+      <label for="update{{ listName }}">
+        <input 
+        class="element_checkbox" 
+        type="checkbox" 
+        id="update{{ listName }}" 
+        value="1" 
+        name="update{{ listName }}"
+        {{- listTag.current ? "" : "checked=checked" -}}
+        />
+        <span></span>
+        {{ _t(listTag.current ? 'BENEVOLAT_UPDATE_LIST' : 'BENEVOLAT_CREATE_LIST')|replace({'{listName}':listTag.new}) }}
+      </label>
+      <div class="input-group-append">
+        <span class="input-group-text">
+          {% if listTag.current %}
+            <a 
+              href="{{ url({tag:listTag.current}) }}"
+              title="{{ _t('SEE') ~ ' ' ~ listTag.current }}"
+              class="btn btn-icon btn-default modalbox"
+              data-size="modal-lg"
+              data-placement="right"
+              data-toggle="tooltip">
+              <i class="fas fa-eye"></i>
+            </a>
+          {% endif %}
+        </span>
+      </div>
+      <div class="input-group-append">
+        <span class="input-group-text">
+          {{ _t('BENEVOLAT_NAME_TO_USE') }}&nbsp;
+        </span>
+      </div>
+      <div class="input-group-append">
+       <input type="text" id="updateName{{ listName }}" name="updateName{{ listName }}" value="{{ listTag.new[5:] }}">
+      </div>
+    </div>
+  {% endfor %}
+
+  {# Installation des formulaires #}
+  {% for formName,formId in formsIds %}
+    <div class="input-group">
+      <label for="updateForm{{ formName }}">
+        <input 
+        class="element_checkbox" 
+        type="checkbox" 
+        id="updateForm{{ formName }}" 
+        value="1" 
+        name="updateForm{{ formName }}"
+        {{- formId ? "" : "checked=checked" -}}
+        />
+        <span></span>
+        {{ _t(formId ? 'BENEVOLAT_UPDATE_FORM' : 'BENEVOLAT_CREATE_FORM')|replace({'{formName}':formName}) }}
+      </label>
+      <div class="input-group-append">
+        <span class="input-group-text">
+          {% if formId %}
+            <a 
+              href="{{ url({tag:'BazaR',params:{vue:'formulaire',action:'modif',idformulaire:formId}}) }}"
+              title="{{ _t('SEE') ~ ' ' ~ formName ~ '(' ~ formId ~')' }}"
+              class="btn btn-icon btn-default new-window"
+              data-placement="right"
+              data-toggle="tooltip">
+              <i class="fas fa-eye"></i>
+            </a>
+          {% endif %}
+        </span>
+      </div>
+    </div>
+  {% endfor %}
+
+  {# Installation des pages #}
+  {% for pageTag, realPageTag in pagesTags %}
+    <div class="input-group">
+      <label for="updatePage{{ pageTag }}">
+        <input 
+        class="element_checkbox" 
+        type="checkbox" 
+        id="updatePage{{ pageTag }}" 
+        value="1" 
+        name="updatePage{{ pageTag }}"
+        {{- realPageTag.current ? "" : "checked=checked" -}}
+        />
+        <span></span>
+        {{ _t(realPageTag.current ? 'BENEVOLAT_UPDATE_PAGE' : 'BENEVOLAT_CREATE_PAGE')|replace({'{pageTag}':realPageTag.new}) }}
+      </label>
+      <div class="input-group-append">
+        <span class="input-group-text">
+          {% if realPageTag.current %}
+            <a 
+              href="{{ url({tag:realPageTag.current}) }}"
+              title="{{ _t('SEE') ~ ' ' ~ realPageTag.current }}"
+              class="btn btn-icon btn-default new-window"
+              data-placement="right"
+              data-toggle="tooltip">
+              <i class="fas fa-eye"></i>
+            </a>
+          {% endif %}
+        </span>
+      </div>
+      <div class="input-group-append">
+        <span class="input-group-text">
+          &nbsp;{{ _t('BENEVOLAT_NAME_TO_USE') }}&nbsp;
+        </span>
+      </div>
+      <div class="input-group-append">
+        <input type="text" id="updateName{{ pageTag }}" name="updateName{{ pageTag }}" value="{{ realPageTag.new }}">
+      </div>
+    </div>
+  {% endfor %}
+  {# Installation dans PageRapideHaut #}
+  <div class="input-group">
+    <label for="updatePageRapideHaut">
+      <input 
+      class="element_checkbox" 
+      type="checkbox" 
+      id="updatePageRapideHaut" 
+      value="1" 
+      name="updatePageRapideHaut"
+      />
+      <span></span>
+      {{ _t('BENEVOLAT_UPDATE_PAGERAPIDEHAUT') }}
+    </label>
+    <div class="input-group-append">
+      <span class="input-group-text">
+        <a 
+          href="{{ url({tag:'PageRapideHaut'}) }}"
+          title="{{ _t('SEE') ~ ' PageRapideHaut'  }}"
+          class="btn btn-icon btn-default new-window"
+          data-placement="right"
+          data-toggle="tooltip">
+          <i class="fas fa-eye"></i>
+        </a>
+      </span>
+    </div>
+  </div>

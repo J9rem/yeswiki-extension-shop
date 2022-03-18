@@ -1,0 +1,12 @@
+parameters:
+  shop:
+    # 'mangopay' in future 'stripes' or other
+    serviceName: 'mangopay'
+
+services:
+  _defaults:
+    autowire: true
+    public: true
+
+  YesWiki\Shop\Service\:
+    resource: 'services/*Service.php'
