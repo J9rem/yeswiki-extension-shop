@@ -14,6 +14,7 @@
     </div>
     <select id="serviceName" name="serviceName">
       <option value="mangopay"{{ serviceName == 'mangopay' ? ' selected' : ''}}>MangoPay</option>
+      <option value="helloasso"{{ serviceName == 'helloasso' ? ' selected' : ''}}>HelloAsso</option>
       {# for future usage #}
       {# <option value="mollie"{{ serviceName == 'mollie' ? ' selected' : ''}}>Mollie</option> #}
       {# <option value="stripes"{{ serviceName == 'stripes' ? ' selected' : ''}}>Stripes</option> #}
@@ -34,6 +35,23 @@
       <input type="text" id="mangoPayParams-{{ name }}" name="mangoPayParams[{{ name }}]" value="{{ mangoPayParams[name] }}">
     </div>
   {% endfor %}
+  {# end of MangoPayParams #}
+
+  {# HelloAssoParams #}
+  <label>{{ _t('SHOP_HELLOASSO_PARAMS') }}</label>
+
+  {% for name,translation in helloAssoParamsNames %}
+  
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text">
+          {{ _t(translation) }}&nbsp;
+        </span>
+      </div>
+      <input type="text" id="helloAssoParams-{{ name }}" name="helloAssoParams[{{ name }}]" value="{{ helloAssoParams[name] }}">
+    </div>
+  {% endfor %}
+  {# end of HelloAssoParams #}
 
   <div class="form-group">
     <div class="col-sm-9 col-sm-offset-3">

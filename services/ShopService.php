@@ -15,12 +15,13 @@ use Exception;
 use MangoPay\MangoPayApi;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use YesWiki\Shop\PaymentSystemServiceInterface;
+use YesWiki\Shop\Service\HelloAssoService;
 use YesWiki\Shop\Service\MangoPayService;
 use YesWiki\Wiki;
 
 class ShopService
 {
-protected const AUTHORIZED_SERVICE_NAMES = ['mangopay']; /* for future usage ,'mollie','stripes'*/
+    protected const AUTHORIZED_SERVICE_NAMES = ['mangopay','helloasso']; /* for future usage ,'mollie','stripes'*/
 
     protected $params;
     protected $paymentSystemService;
@@ -42,6 +43,9 @@ protected const AUTHORIZED_SERVICE_NAMES = ['mangopay']; /* for future usage ,'m
     {
         if (is_null($this->paymentSystemService)) {
             switch ($this->serviceName) {
+                case 'helloasso':
+                    return $this->wiki->services->get(HelloAssoService::class);
+                    break;
                 case 'mangopay':
                     return $this->wiki->services->get(MangoPayService::class);
                     break;
@@ -56,7 +60,7 @@ protected const AUTHORIZED_SERVICE_NAMES = ['mangopay']; /* for future usage ,'m
 
     public function getServiceName(string $wantedServiceName = ""): string
     {
-        if (!empty($wantedServiceName)){
+        if (!empty($wantedServiceName)) {
             $this->serviceName = in_array($wantedServiceName, self::AUTHORIZED_SERVICE_NAMES, true) ? $wantedServiceName: self::AUTHORIZED_SERVICE_NAMES[0];
         }
         return $this->serviceName;
