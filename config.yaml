@@ -1,7 +1,17 @@
 parameters:
   shop:
-    # 'mangopay' in future 'stripes' or other
-    serviceName: 'mangopay'
+    # 'helloasso', 'mangopay' and in future 'stripes', 'mollie' or other
+    serviceName: 'helloasso'
+  shop_editable_config_params:
+    - shop:
+      - serviceName
+      - mangoPay:
+        - clientId
+        - clientApiKey
+      - helloAsso:
+        - clientId
+        - clientApiKey
+        - organizationSlug
 
 services:
   _defaults:

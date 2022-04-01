@@ -22,10 +22,7 @@ use YesWiki\Shop\PaymentSystemServiceInterface;
 class MangoPayService implements PaymentSystemServiceInterface
 {
     private const SANDBOX_MODE = true;
-    public const MANGOPAY_PARAMS_NAMES = [
-        'clientId' => 'SHOP_MANGOPAY_CLIENTID',
-        'clientApiKey' => 'SHOP_MANGOPAY_CLIENTAPIKEY'
-    ];
+    private const PARAMS_NAMES = ['clientId', 'clientApiKey'];
 
     private $mangoPayApi;
     protected $params;
@@ -48,10 +45,10 @@ class MangoPayService implements PaymentSystemServiceInterface
         }
 
         // get parameters
-        $mangoPayParams = $this->params->get('shop')['mangoPayParams'];
-        foreach (MangoPayService::MANGOPAY_PARAMS_NAMES as $key => $value) {
+        $mangoPayParams = $this->params->get('shop')['mangoPay'];
+        foreach (MangoPayService::PARAMS_NAMES as $key) {
             if (empty($mangoPayParams[$key])) {
-                throw new EmptyMangoPayParamException("Param ['shop']['mangoPayParams'] should contain a not empty '$key' key!");
+                throw new EmptyMangoPayParamException("Param ['shop']['mangoPay'] should contain a not empty '$key' key!");
             }
         }
 

@@ -10,22 +10,14 @@
  */
 
 return [
-    // handlers/GestionShopHandler.php
-    'SHOP_MANGOPAY_CLIENTID' => 'Identifiant client MangoPay',
-    'SHOP_MANGOPAY_CLIENTAPIKEY' => 'Clé api du client MangoPay',
-    'SHOP_UPDATE_MANGOPAY_PARAMS' => 'Mise à jour des paramètres MangoPay effectuée !',
-    'SHOP_HELLOASSO_CLIENTID' => 'Identifiant client HelloAsso',
-    'SHOP_HELLOASSO_CLIENTAPIKEY' => 'Clé api du client HelloAsso',
-    'SHOP_UPDATE_HELLOASSO_PARAMS' => 'Mise à jour des paramètres HelloAsso effectuée !',
-    'SHOP_UPDATE_SERVICENAME' => 'Mise à jour du nom du système de paiement effectuée !',
 
-    // templates/gestion-shop.twig
-    'SHOP_MANAGEMENT_TITLE' => 'Gestion de l\'extension Shop',
-    'SHOP_MANGOPAY_PARAMS' => 'Paramètres MangoPay',
-    'SHOP_HELLOASSO_PARAMS' => 'Paramètres HelloAsso',
-    'SHOP_SERVICENAME' => 'Nom du système de paiement',
-
-    // templates/update-handler.twig
-    'SHOP_UPDATE_TITLE' => 'Gestion de l\'extension Shop',
-    'SHOP_MANAGE' => 'Gérer l\'extension Shop',
+    // actions/EditConfigAction.php
+    'EDIT_CONFIG_GROUP_SHOP' => 'Extension "shop"',
+    'EDIT_CONFIG_HINT_SHOP[SERVICENAME]' => 'Nom du système de paiement (helloasso ou mangopay) - EN TEST',
+    'EDIT_CONFIG_HINT_SHOP[MANGOPAY][CLIENTID]' => 'Identifiant client MangoPay',
+    'EDIT_CONFIG_HINT_SHOP[MANGOPAY][CLIENTAPIKEY]' => 'Clé api du client MangoPay',
+    'EDIT_CONFIG_HINT_SHOP[HELLOASSO][CLIENTID]' => 'Identifiant client HelloAsso',
+    'EDIT_CONFIG_HINT_SHOP[HELLOASSO][CLIENTAPIKEY]' => 'Clé api du client HelloAsso',
+    'EDIT_CONFIG_HINT_SHOP[HELLOASSO][ORGANIZATIONSLUG]' => 'Identifiant de l\'organisation dans les urls',
+    
 ];
