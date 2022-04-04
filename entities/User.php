@@ -11,7 +11,7 @@
 
 namespace YesWiki\Shop\Entity;
 
-class UserDefinition
+class User
 {
     public $firstName;
     public $lastName;

@@ -13,7 +13,7 @@ namespace YesWiki\Shop\Service;
 
 use Exception;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use YesWiki\Shop\Entity\UserDefinition;
+use YesWiki\Shop\Entity\User;
 use YesWiki\Shop\Exception\EmptyHelloAssoParamException;
 use YesWiki\Shop\PaymentSystemServiceInterface;
 
@@ -56,11 +56,11 @@ class HelloAssoService implements PaymentSystemServiceInterface
 
     /**
      * Create HelloAsso User
-     * @param UserDefinition $userDefinition
+     * @param User $user
      *
      * @return array []
      */
-    public function getUser(UserDefinition $userDefinition)
+    public function getUser(User $user)
     {
         $this->loadApi(); // lazzy load
 

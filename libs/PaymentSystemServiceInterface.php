@@ -12,7 +12,7 @@
 namespace YesWiki\Shop;
 
 use Exception;
-use YesWiki\Shop\Entity\UserDefinition;
+use YesWiki\Shop\Entity\User;
 
 interface PaymentSystemServiceInterface
 {
@@ -26,9 +26,9 @@ interface PaymentSystemServiceInterface
     /**
      * get a User , create it if not already existing
      *
-     * @param UserDefinition
+     * @param User
      *
      * @return mixed
      */
-    public function getUser(UserDefinition $userDefinition);
+    public function getUser(User $user);
 }

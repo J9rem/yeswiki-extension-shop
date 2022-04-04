@@ -15,7 +15,7 @@ use Exception;
 use MangoPay\MangoPayApi;
 use MangoPay\UserNatural;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use YesWiki\Shop\Entity\UserDefinition;
+use YesWiki\Shop\Entity\User;
 use YesWiki\Shop\Exception\EmptyMangoPayParamException;
 use YesWiki\Shop\PaymentSystemServiceInterface;
 
@@ -68,22 +68,22 @@ class MangoPayService implements PaymentSystemServiceInterface
 
     /**
      * Create Mangopay User
-     * @param UserDefinition $userDefinition
+     * @param User $user
      *
      * @return MangopPayUser $mangoUser
      */
-    public function getUser(UserDefinition $userDefinition)
+    public function getUser(User $user)
     {
         $this->loadApi(); // lazzy load
 
         $mangoUser = new UserNatural();
         $mangoUser->PersonType = "NATURAL";
-        $mangoUser->FirstName = $userDefinition->firstName;
-        $mangoUser->LastName = $userDefinition->lastName;
-        $mangoUser->Birthday = $userDefinition->birthday;
-        $mangoUser->Nationality = $userDefinition->nationality;
-        $mangoUser->CountryOfResidence = $userDefinition->countryOfResidence;
-        $mangoUser->Email = $userDefinition->email;
+        $mangoUser->FirstName = $user->firstName;
+        $mangoUser->LastName = $user->lastName;
+        $mangoUser->Birthday = $user->birthday;
+        $mangoUser->Nationality = $user->nationality;
+        $mangoUser->CountryOfResidence = $user->countryOfResidence;
+        $mangoUser->Email = $user->email;
 
         //Send the request
         $mangoUser = $this->mangoPayApi->Users->Create($mangoUser);
