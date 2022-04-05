@@ -13,6 +13,7 @@ namespace YesWiki\Shop;
 
 use Exception;
 use YesWiki\Shop\Entity\User;
+use YesWiki\Shop\PaymentsInterface;
 
 interface PaymentSystemServiceInterface
 {
@@ -31,4 +32,13 @@ interface PaymentSystemServiceInterface
      * @return mixed
      */
     public function getUser(User $user);
+
+    /**
+     * get a payments
+     *
+     * @param array $options
+     *
+     * @return PaymentsInterface|null
+     */
+    public function getPayments(array $options): ?PaymentsInterface;
 }

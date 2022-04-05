@@ -13,8 +13,10 @@ namespace YesWiki\Shop\Service;
 
 use Exception;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use YesWiki\Shop\Entity\Payment;
 use YesWiki\Shop\Entity\User;
 use YesWiki\Shop\Exception\EmptyHelloAssoParamException;
+use YesWiki\Shop\HelloAssoPayments;
 use YesWiki\Shop\PaymentSystemServiceInterface;
 
 class HelloAssoService implements PaymentSystemServiceInterface
@@ -116,23 +118,28 @@ class HelloAssoService implements PaymentSystemServiceInterface
 
     /**
      * get payments via hello asso
-     * @param string $email
-     * @param array $states
-     * @return array $payments
+     * @param array $options
+     * @return HelloAssoPayments|null $payments
      */
-    public function getPayments(string $email = "", array $states = ["Authorized"]): array
+    public function getPayments(array $options): ?HelloAssoPayments
     {
+        $options = array_merge(['states' => ["Authorized"]], $options);
         $this->loadApi();
         $url = $this->baseUrl."v5/organizations/{$this->getOrganizationSlug()}/payments";
-        if (!empty($email)) {
-            $query = (isset($query) ? $query."&" : "?")."userSearchKey=".urlencode($email);
+        if (!empty($options['email'])) {
+            $query = (isset($query) ? $query."&" : "?")."userSearchKey=".urlencode($options['email']);
         }
-        if (!empty($states)) {
-            foreach ($states as $key => $value) {
+        if (!empty($options['states'])) {
+            foreach ($options['states'] as $key => $value) {
                 $query = (isset($query) ? $query."&" : "?")."states[$key]=$value";
             }
         }
-        return $this->getRouteApi($url.($query ?? ""), "payments");
+        $results = $this->getRouteApi($url.($query ?? ""), "payments");
+
+        $helloAssoPayments = new HelloAssoPayments($this->convertToPayments($results), [
+            'nextPageToken' => $results['continuationToken'] ?? null,
+        ]);
+        return $helloAssoPayments;
     }
 
     /**
@@ -169,5 +176,33 @@ class HelloAssoService implements PaymentSystemServiceInterface
             }
         }
         return $this->organizationSlug;
+    }
+
+    private function convertToUser(array $data): ?User
+    {
+        $user = new User();
+        $user->firstName = $data['firstName'] ?? null;
+        $user->lastName = $data['lastName'] ?? null;
+        $user->compagny = $data['company'] ?? null;
+        $user->email = $data['email'] ?? null;
+        $user->address = $data['address'] ?? null;
+        $user->postalCode = $data['zipCode'] ?? null;
+        $user->town = $data['city'] ?? null;
+        $user->countryOfResidence = $data['firstName'] ?? null;
+        return $user;
+    }
+
+    private function convertToPayments(array $data): array
+    {
+        $payments = [];
+        foreach ($data['data'] as $payment) {
+            $newData = [];
+            $newData['id'] = $payment['id'];
+            $newData['amount'] = $payment['amount'];
+            $newData['date'] = $payment['date'];
+            $newData['payer'] = $this->convertToUser($payment['payer']);
+            $payments[] = new Payment($newData);
+        }
+        return $payments;
     }
 }

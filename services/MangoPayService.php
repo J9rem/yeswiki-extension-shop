@@ -17,6 +17,7 @@ use MangoPay\UserNatural;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use YesWiki\Shop\Entity\User;
 use YesWiki\Shop\Exception\EmptyMangoPayParamException;
+use YesWiki\Shop\PaymentsInterface;
 use YesWiki\Shop\PaymentSystemServiceInterface;
 
 class MangoPayService implements PaymentSystemServiceInterface
@@ -89,5 +90,16 @@ class MangoPayService implements PaymentSystemServiceInterface
         $mangoUser = $this->mangoPayApi->Users->Create($mangoUser);
 
         return $mangoUser;
+    }
+    
+    /**
+     * get payments via hello asso
+     * @param array $options
+     * @return null
+     */
+    public function getPayments(array $options): ?PaymentsInterface
+    {
+        // @todo complete
+        return null;
     }
 }

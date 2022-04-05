@@ -14,4 +14,6 @@ if (!defined("WIKINI_VERSION")) {
 }
 
 // Includes
+require_once __DIR__ . '/libs/PaymentsInterface.php';
+require_once __DIR__ . '/libs/HelloAssoPayments.php';
 require_once __DIR__ . '/libs/PaymentSystemServiceInterface.php';

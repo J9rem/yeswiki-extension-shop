@@ -11,10 +11,13 @@
 
 namespace YesWiki\Shop\Entity;
 
-class User
+use JsonSerializable;
+
+class User implements JsonSerializable
 {
     public $firstName;
     public $lastName;
+    public $compagny;
     public $email;
     public $phoneNumber;
     public $nationality;
@@ -29,6 +32,7 @@ class User
     {
         $this->firstName = null;
         $this->lastName = null;
+        $this->compagny = null;
         $this->email = null;
         $this->phoneNumber = null;
         $this->nationality = null;
@@ -39,4 +43,24 @@ class User
         $this->countryOfResidence = null;
         $this->birthday = null;
     }
+
+    /* === JsonSerializable interface === */
+    public function jsonSerialize()
+    {
+        return [
+            'firstName' => $this->firstName,
+            'lastName' => $this->lastName,
+            'compagny' => $this->compagny,
+            'email' => $this->email,
+            'phoneNumber' => $this->phoneNumber,
+            'nationality' => $this->nationality,
+            'address' => $this->address,
+            'addressComplement' => $this->addressComplement,
+            'postalCode' => $this->postalCode,
+            'town' => $this->town,
+            'countryOfResidence' => $this->countryOfResidence,
+            'birthday' => $this->birthday,
+            ];
+    }
+    /* === === */
 }

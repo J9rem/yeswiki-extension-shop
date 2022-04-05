@@ -1,0 +1,99 @@
+<?php
+
+/*
+ * This file is part of the YesWiki Extension Shop.
+ *
+ * Authors : see README.md file that was distributed with this source code.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace YesWiki\Shop;
+
+use Exception;
+use Iterator;
+use YesWiki\Shop\Entity\Payment;
+use YesWiki\Shop\Entity\User;
+use YesWiki\Shop\PaymentsInterface;
+
+class HelloAssoPayments implements PaymentsInterface
+{
+    private $nextPageToken;
+    private $payments;
+    private $position;
+
+    /**
+     * @param Payment[] $payments
+     * @param array $otherData
+     */
+    public function __construct(array $payments, array $otherData)
+    {
+        if (count(array_filter($payments, function ($payment) {
+            return !($payment instanceof Payment);
+        })) > 0) {
+            throw new Exception("\$payments should be an array of Payment");
+        }
+        $this->payments = array_values($payments);
+        $this->position = 0;
+        $this->nextPageToken = isset($otherData['nextPageToken']) && is_string($otherData['nextPageToken']) ? $otherData['nextPageToken'] : "";
+    }
+
+    /**
+     * get next token to retrive the following results if pagintation
+     *
+     * @return string $nextPageToken
+     */
+    public function getNextPageToken():string
+    {
+        return $this->nextPageToken;
+    }
+
+    /**
+     * Iterator on payments only !
+     * @return Payment[]
+     */
+    public function getPayments():array
+    {
+        return $this->payments;
+    }
+
+    /* === Iterator interface === */
+    public function current(): mixed
+    {
+        return $this->payments[$this->position];
+    }
+
+    public function key(): mixed
+    {
+        return $this->position;
+    }
+
+    public function next(): void
+    {
+        ++$this->position;
+    }
+
+    public function rewind(): void
+    {
+        $this->position = 0;
+    }
+
+    public function valid(): bool
+    {
+        return isset($this->payments[$this->position]);
+    }
+
+    /* === === */
+
+    
+    /* === JsonSerializable interface === */
+    public function jsonSerialize()
+    {
+        return [
+            'payments' => $this->getPayments(),
+            'nextPageToken' => $this->getNextPageToken(),
+            ];
+    }
+    /* === === */
+}
