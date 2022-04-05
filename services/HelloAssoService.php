@@ -113,7 +113,18 @@ class HelloAssoService implements PaymentSystemServiceInterface
     {
         $this->loadApi();
         $url = $this->baseUrl."v5/organizations/{$this->getOrganizationSlug()}/forms";
-        return $this->getRouteApi($url, "forms");
+        $forms = [];
+        do {
+            $results = $this->getRouteApi($url, "forms");
+            foreach ($results['data'] as $form) {
+                $forms[] = $form;
+            }
+            $pageIndex = $results['pagination']['pageIndex'];
+            $totalPages = $results['pagination']['totalPages'];
+            $continuationToken = $results['pagination']['continuationToken'];
+            $url = $this->baseUrl."v5/organizations/{$this->getOrganizationSlug()}/forms?continuationToken={$continuationToken}";
+        } while ($pageIndex < $totalPages);
+        return $forms;
     }
 
     /**
@@ -125,7 +136,11 @@ class HelloAssoService implements PaymentSystemServiceInterface
     {
         $options = array_merge(['states' => ["Authorized"]], $options);
         $this->loadApi();
-        $url = $this->baseUrl."v5/organizations/{$this->getOrganizationSlug()}/payments";
+        if (!empty($options['formType']) && !empty($options['formSlug'])) {
+            $url = $this->baseUrl."v5/organizations/{$this->getOrganizationSlug()}/forms/{$options['formType']}/{$options['formSlug']}/payments";
+        } else {
+            $url = $this->baseUrl."v5/organizations/{$this->getOrganizationSlug()}/payments";
+        }
         if (!empty($options['email'])) {
             $query = (isset($query) ? $query."&" : "?")."userSearchKey=".urlencode($options['email']);
         }
