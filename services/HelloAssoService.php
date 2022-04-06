@@ -150,9 +150,19 @@ class HelloAssoService implements PaymentSystemServiceInterface
             }
         }
         $results = $this->getRouteApi($url.($query ?? ""), "payments");
+        
+        $pageIndex = isset($results['pagination']) && isset($results['pagination']['pageIndex']) && is_scalar($results['pagination']['pageIndex'])
+            ? intval($results['pagination']['pageIndex'])
+            : 1;
+        $totalPages = isset($results['pagination']) && isset($results['pagination']['totalPages']) && is_scalar($results['pagination']['totalPages'])
+            ? intval($results['pagination']['totalPages'])
+            : 1;
+        $continuationToken = isset($results['pagination']) && isset($results['pagination']['continuationToken']) && is_scalar($results['pagination']['continuationToken'])
+            ? strval($results['pagination']['continuationToken'])
+            : "";
 
         $helloAssoPayments = new HelloAssoPayments($this->convertToPayments($results), [
-            'nextPageToken' => $results['continuationToken'] ?? null,
+            'nextPageToken' => ($pageIndex < $totalPages) ? $continuationToken : "",
         ]);
         return $helloAssoPayments;
     }
