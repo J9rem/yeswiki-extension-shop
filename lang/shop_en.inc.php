@@ -19,4 +19,5 @@ return [
     'EDIT_CONFIG_HINT_SHOP[HELLOASSO][CLIENTID]' => 'HelloAsso client ID',
     'EDIT_CONFIG_HINT_SHOP[HELLOASSO][CLIENTAPIKEY]' => 'HelloAsso client\'s api key',
     'EDIT_CONFIG_HINT_SHOP[HELLOASSO][ORGANIZATIONSLUG]' => 'Organization\s slug dans les urlsin url',
+    'EDIT_CONFIG_HINT_SHOP[HELLOASSO][POSTAPITOKEN]' => 'API\'s key for HelloAsso notification url to YesWiki',
 ];

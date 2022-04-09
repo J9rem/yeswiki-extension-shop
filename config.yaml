@@ -12,6 +12,7 @@ parameters:
         - clientId
         - clientApiKey
         - organizationSlug
+        - postApiToken
 
 services:
   _defaults:
@@ -20,3 +21,6 @@ services:
 
   YesWiki\Shop\Service\:
     resource: 'services/*Service.php'
+  
+  YesWiki\Shop\Controller\:
+    resource: 'controllers/*.php'
