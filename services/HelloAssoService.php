@@ -137,7 +137,7 @@ class HelloAssoService implements PaymentSystemServiceInterface
      * @param array $options
      * @return HelloAssoPayments|null $payments
      */
-    public function getPayments(array $options): ?HelloAssoPayments
+    public function getPayments(array $options): ?PaymentsInterface
     {
         $options = array_merge(['states' => ["Authorized"]], $options);
         $this->loadApi();
