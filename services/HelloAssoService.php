@@ -19,6 +19,7 @@ use YesWiki\Shop\Entity\Payment;
 use YesWiki\Shop\Entity\User;
 use YesWiki\Shop\Exception\EmptyHelloAssoParamException;
 use YesWiki\Shop\HelloAssoPayments;
+use YesWiki\Shop\PaymentsInterface;
 use YesWiki\Shop\PaymentSystemServiceInterface;
 use YesWiki\Wiki;
 
