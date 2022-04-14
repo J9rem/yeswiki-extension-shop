@@ -59,12 +59,12 @@ class HelloAssoPayments implements PaymentsInterface
     }
 
     /* === Iterator interface === */
-    public function current(): mixed
+    public function current()
     {
         return $this->payments[$this->position];
     }
 
-    public function key(): mixed
+    public function key()
     {
         return $this->position;
     }
