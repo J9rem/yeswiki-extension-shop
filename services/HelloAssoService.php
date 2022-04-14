@@ -25,7 +25,7 @@ use YesWiki\Wiki;
 
 class HelloAssoService implements PaymentSystemServiceInterface
 {
-    private const SANDBOX_MODE = true;
+    private const SANDBOX_MODE = false;
     private const PARAMS_NAMES = ['clientId', 'clientApiKey'];
 
     protected $params;
@@ -37,7 +37,7 @@ class HelloAssoService implements PaymentSystemServiceInterface
     public function __construct(ParameterBagInterface $params, Wiki $wiki)
     {
         $this->params = $params;
-        $this->baseUrl = self::SANDBOX_MODE ? "https://api.helloasso.com/" : "https://api.helloasso.com/";
+        $this->baseUrl = self::SANDBOX_MODE ? "https://api.helloasso-rc.com/" : "https://api.helloasso.com/";
         $this->organizationSlug = null;
         $this->token = null;
         $this->wiki = $wiki;

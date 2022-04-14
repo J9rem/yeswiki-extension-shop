@@ -13,7 +13,7 @@ return [
 
     // actions/EditConfigAction.php
     'EDIT_CONFIG_GROUP_SHOP' => 'Extension "shop"',
-    'EDIT_CONFIG_HINT_SHOP[SERVICENAME]' => 'Nom du système de paiement (helloasso ou mangopay) - EN TEST',
+    'EDIT_CONFIG_HINT_SHOP[SERVICENAME]' => 'Nom du système de paiement (helloasso) - EN TEST',
     'EDIT_CONFIG_HINT_SHOP[MANGOPAY][CLIENTID]' => 'Identifiant client MangoPay',
     'EDIT_CONFIG_HINT_SHOP[MANGOPAY][CLIENTAPIKEY]' => 'Clé api du client MangoPay',
     'EDIT_CONFIG_HINT_SHOP[HELLOASSO][CLIENTID]' => 'Identifiant client HelloAsso',

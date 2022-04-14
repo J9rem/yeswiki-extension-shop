@@ -21,7 +21,7 @@ use YesWiki\Wiki;
 
 class ShopService
 {
-    protected const AUTHORIZED_SERVICE_NAMES = ['mangopay','helloasso']; /* for future usage ,'mollie','stripes'*/
+    protected const AUTHORIZED_SERVICE_NAMES = ['helloasso']; /* for future usage ,'mollie','stripes','mangopay'*/
 
     protected $params;
     protected $paymentSystemService;
