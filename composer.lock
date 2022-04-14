@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2fc343c97c972ee9b51f57aa8a5faecd",
+    "content-hash": "692d57d9b1b58e55d8931327585532c5",
     "packages": [
         {
             "name": "mangopay/php-sdk-v2",
-            "version": "3.10.0",
+            "version": "3.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Mangopay/mangopay2-php-sdk.git",
-                "reference": "b63f9052d6207109017f4bf1e5c3ea3c0ecdf4d7"
+                "reference": "52e4cd70f41d7e2c2015f1537c3404de6f30ac43"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Mangopay/mangopay2-php-sdk/zipball/b63f9052d6207109017f4bf1e5c3ea3c0ecdf4d7",
-                "reference": "b63f9052d6207109017f4bf1e5c3ea3c0ecdf4d7",
+                "url": "https://api.github.com/repos/Mangopay/mangopay2-php-sdk/zipball/52e4cd70f41d7e2c2015f1537c3404de6f30ac43",
+                "reference": "52e4cd70f41d7e2c2015f1537c3404de6f30ac43",
                 "shasum": ""
             },
             "require": {
@@ -25,7 +25,7 @@
                 "ext-json": "*",
                 "ext-openssl": "*",
                 "php": ">=5.6",
-                "psr/log": "^1.0"
+                "psr/log": "^1.0|^2.0|^3.0"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.18",
@@ -44,9 +44,9 @@
             "description": "PHP SDK for MANGOPAY",
             "support": {
                 "issues": "https://github.com/Mangopay/mangopay2-php-sdk/issues",
-                "source": "https://github.com/Mangopay/mangopay2-php-sdk/tree/3.10.0"
+                "source": "https://github.com/Mangopay/mangopay2-php-sdk/tree/3.12.0"
             },
-            "time": "2021-11-19T08:35:38+00:00"
+            "time": "2022-03-31T17:02:44+00:00"
         },
         {
             "name": "psr/log",
@@ -105,7 +105,12 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": "^7.3 || ^8.0"
+    },
     "platform-dev": [],
+    "platform-overrides": {
+        "php": "7.3.0"
+    },
     "plugin-api-version": "2.2.0"
 }
