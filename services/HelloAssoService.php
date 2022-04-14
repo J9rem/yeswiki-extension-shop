@@ -229,7 +229,7 @@ class HelloAssoService implements PaymentSystemServiceInterface
         foreach ($data['data'] as $payment) {
             $newData = [];
             $newData['id'] = $payment['id'];
-            $newData['amount'] = $payment['amount'];
+            $newData['amount'] = floatval($payment['amount'])/100;
             $newData['date'] = $payment['date'];
             $newData['payer'] = $this->convertToUser($payment['payer']);
             $payments[] = new Payment($newData);
