@@ -36,11 +36,11 @@ class MangoPayServiceTest extends YesWikiTestCase
      * @covers MangoPayService::loadApi
      * @param Wiki $wiki
      */
-    public function testMangoPayServiceLoadApi(Wiki $wiki)
-    {
-        $mangoPayService = $wiki->services->get(MangoPayService::class);
-        // $this->expectException(EmptyMangoPayParamException::class);
-        $mangoPayService->loadApi();
-        $this->assertTrue(true); // all is fine if no exception
-    }
+    // public function testMangoPayServiceLoadApi(Wiki $wiki)
+    // {
+    //     $mangoPayService = $wiki->services->get(MangoPayService::class);
+    //     // $this->expectException(EmptyMangoPayParamException::class);
+    //     $mangoPayService->loadApi();
+    //     $this->assertTrue(true); // all is fine if no exception
+    // }
 }

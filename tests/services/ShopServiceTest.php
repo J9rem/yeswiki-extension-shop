@@ -11,7 +11,7 @@
 
 namespace YesWiki\Test\Shop\Service;
 
-use YesWiki\Shop\Service\MangoPayService;
+use YesWiki\Shop\Service\HelloAssoService;
 use YesWiki\Shop\Service\ShopService;
 use YesWiki\Test\Core\YesWikiTestCase;
 use YesWiki\Wiki;
@@ -46,7 +46,7 @@ class ShopServiceTest extends YesWikiTestCase
         $serviceName = $shopService->getServiceName("wrong not allowed service name");
         $this->assertNotEmpty($serviceName);
         $this->assertIsString($serviceName);
-        $this->assertEquals($serviceName, 'mangopay');
+        $this->assertEquals($serviceName, 'helloasso');
     }
 
     /**
@@ -59,7 +59,7 @@ class ShopServiceTest extends YesWikiTestCase
     {
         $shopService = $wiki->services->get(ShopService::class);
         $paymentSystemService = $shopService->getPaymentSystemService();
-        // at this point 'mangopay' serviceName is forced by testShopGetServiceName
-        $this->assertInstanceOf(MangoPayService::class, $paymentSystemService);
+        // at this point 'helloasso' serviceName is forced by testShopGetServiceName
+        $this->assertInstanceOf(HelloAssoService::class, $paymentSystemService);
     }
 }
