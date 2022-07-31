@@ -2,5 +2,5 @@
 <plugin name="shop" version="0.1" active="1">
   <author>Jeremy Dufraisse</author>
   <label>Shop</label>
-  <desc>Le plugin "shop" vous permet de lier votre wiki à un système de paiement en ligne sécurisé.</desc>
+  <desc>Le plugin -shop- vous permet de lier votre wiki a un systeme de paiement en ligne securise.</desc>
 </plugin>
