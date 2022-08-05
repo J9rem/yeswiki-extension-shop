@@ -106,6 +106,8 @@ class HelloAssoService implements PaymentSystemServiceInterface
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         }
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5); // connect timeout in seconds
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5); // total timeout in seconds
         $results = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $error = curl_error($ch);
