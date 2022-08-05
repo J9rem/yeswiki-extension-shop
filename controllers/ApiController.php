@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use YesWiki\Core\ApiResponse;
 use YesWiki\Core\YesWikiController;
+use YesWiki\Shop\Service\EventDispatcher;
 use YesWiki\Shop\Service\HelloAssoService;
 
 class ApiController extends YesWikiController
@@ -27,9 +28,8 @@ class ApiController extends YesWikiController
         if (!$this->getService(HelloAssoService::class)->isAllowedProcessTrigger($token)) {
             return new ApiResponse(['error' => 'not allowed token'], Response::HTTP_UNAUTHORIZED);
         }
-        $data = $this->getService(HelloAssoService::class)->processTrigger($_POST);
-        $response = $data->getResponse();
-        return new ApiResponse(empty($response) ? null : $response, $data->getCode());
+        $this->getService(EventDispatcher::class)->dispatch('shop.helloasso.api.called', ['post' => $_POST]);
+        return new ApiResponse(null, Response::HTTP_OK);
     }
 
     /**

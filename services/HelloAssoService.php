@@ -14,7 +14,6 @@ namespace YesWiki\Shop\Service;
 use Exception;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Response;
-use YesWiki\Shop\Entity\ApiData;
 use YesWiki\Shop\Entity\Payment;
 use YesWiki\Shop\Entity\User;
 use YesWiki\Shop\Exception\EmptyHelloAssoParamException;
@@ -235,65 +234,6 @@ class HelloAssoService implements PaymentSystemServiceInterface
             $payments[] = new Payment($newData);
         }
         return $payments;
-    }
-
-    /**
-     * process trigger when called via api
-     * @param array $postNotSanitized
-     * @return ApiData $returnData
-     */
-    public function processTrigger(array $postNotSanitized): ApiData
-    {
-        $results = [];
-        foreach ($this->getMethodsToTrigger() as $index => $methodData) {
-            $rawResult = call_user_func(
-                [
-                    $methodData['object'],
-                    $methodData['methodName'],
-                ],
-                $postNotSanitized,
-                $index
-            );
-            if (is_array($rawResult)) {
-                $results = array_merge($results, $rawResult);
-            }
-        }
-        return new ApiData(Response::HTTP_OK, $results);
-    }
-
-    /**
-     * get methods to trigger from params finishing by '_shopHelloAssoTrigger'
-     * @return array
-     */
-    private function getMethodsToTrigger(): array
-    {
-        $filteredParams = array_filter(
-            $this->params->all(),
-            function ($paramKey) {
-                $postfix = '_shopHelloAssoTrigger';
-                return substr($paramKey, -strlen($postfix)) == $postfix;
-            },
-            ARRAY_FILTER_USE_KEY
-        );
-        $methods = [];
-        if (!empty($filteredParams)) {
-            foreach ($filteredParams as $paramKey => $data) {
-                if (is_array($data)) {
-                    foreach ($data as $serviceName => $methodName) {
-                        if ($this->wiki->services->has($serviceName)) {
-                            $object =  $this->wiki->services->get($serviceName);
-                            if (method_exists($object, $methodName)) {
-                                $methods[] = [
-                                    'object' => $object,
-                                    'methodName' => $methodName
-                                ];
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return $methods;
     }
 
     public function isAllowedProcessTrigger(string $token): bool
