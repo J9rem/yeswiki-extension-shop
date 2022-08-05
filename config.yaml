@@ -24,7 +24,7 @@ services:
     public: true
 
   YesWiki\Shop\Service\:
-    resource: 'services/*Service.php'
+    resource: 'services/*.php'
   
   YesWiki\Shop\Controller\:
     resource: 'controllers/*.php'
