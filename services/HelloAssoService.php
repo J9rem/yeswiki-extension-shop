@@ -14,9 +14,11 @@ namespace YesWiki\Shop\Service;
 use Exception;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Response;
+use YesWiki\Core\Service\TripleStore;
 use YesWiki\Shop\Entity\Payment;
 use YesWiki\Shop\Entity\User;
 use YesWiki\Shop\Exception\EmptyHelloAssoParamException;
+use YesWiki\Shop\Exception\NotUpdatedTripleException;
 use YesWiki\Shop\HelloAssoPayments;
 use YesWiki\Shop\PaymentsInterface;
 use YesWiki\Shop\PaymentSystemServiceInterface;
@@ -26,19 +28,23 @@ class HelloAssoService implements PaymentSystemServiceInterface
 {
     private const SANDBOX_MODE = false;
     private const PARAMS_NAMES = ['clientId', 'clientApiKey'];
+    public const TRIPLE_RESOURCE = 'helloAsso';
+    public const TRIPLE_PROPERTY= 'https://yeswiki.net/vocabulary/helloassodata';
 
     protected $params;
     private $baseUrl;
     private $organizationSlug;
     private $token;
+    private $tripleStore;
     private $wiki;
 
-    public function __construct(ParameterBagInterface $params, Wiki $wiki)
+    public function __construct(ParameterBagInterface $params, TripleStore $tripleStore, Wiki $wiki)
     {
         $this->params = $params;
         $this->baseUrl = self::SANDBOX_MODE ? "https://api.helloasso-rc.com/" : "https://api.helloasso.com/";
         $this->organizationSlug = null;
         $this->token = null;
+        $this->tripleStore = $tripleStore;
         $this->wiki = $wiki;
     }
 
@@ -178,11 +184,91 @@ class HelloAssoService implements PaymentSystemServiceInterface
      */
     private function getApiToken(): array
     {
-        $url = $this->baseUrl."oauth2/token";
-        $data = "client_id={$this->params->get('shop')['helloAsso']['clientId']}".
-            "&client_secret={$this->params->get('shop')['helloAsso']['clientApiKey']}".
-            "&grant_type=client_credentials";
-        return $this->getRouteApi($url, "api token", true, $data, false);
+        $triple = $this->getTripleValue();
+        if (empty($triple['value']) ||
+                empty($triple['value']['refreshToken']) ||
+                empty($triple['value']['accessToken']) ||
+                empty($triple['value']['refreshTokenExpireTimeStamp']) ||
+                empty($triple['value']['accessTokenExpireTimeStamp']) ||
+                $triple['value']['refreshTokenExpireTimeStamp'] < time()) {
+            $url = $this->baseUrl."oauth2/token";
+            $data = "client_id={$this->params->get('shop')['helloAsso']['clientId']}".
+                "&client_secret={$this->params->get('shop')['helloAsso']['clientApiKey']}".
+                "&grant_type=client_credentials";
+            $data = $this->getRouteApi($url, "api token", true, $data, false);
+            if (empty($data) || empty($data['access_token'] || empty($data['refresh_token']))) {
+                throw new Exception("Token not generated");
+            }
+            $newValue = [
+                'refreshToken' => strval($data['refresh_token']),
+                'accessToken' => strval($data['access_token']),
+                'accessTokenExpireTimeStamp' => time()+intval($data['expires_in'])-120, // margin of 2 minutes
+                'refreshTokenExpireTimeStamp' => time()+29*24*3600, // 29 days
+            ];
+            $data = $this->saveTriple($triple, $newValue);
+        } elseif ($triple['value']['accessTokenExpireTimeStamp'] < time()) {
+            $url = $this->baseUrl."oauth2/token";
+            $data = "client_id={$this->params->get('shop')['helloAsso']['clientId']}".
+                "&refresh_token={$triple['value']['refreshToken']}".
+                "&grant_type=refresh_token";
+            $data = $this->getRouteApi($url, "api refresh token", true, $data, false);
+            if (empty($data) || empty($data['access_token'] || empty($data['refresh_token']))) {
+                throw new Exception("Token not generated");
+            }
+            $newValue = [
+                'refreshToken' => strval($data['refresh_token']),
+                'accessToken' => strval($data['access_token']),
+                'accessTokenExpireTimeStamp' => time()+intval($data['expires_in'])-120, // margin of 2 minutes
+                'refreshTokenExpireTimeStamp' => time()+29*24*3600, // 29 days
+            ];
+            $data = $this->saveTriple($triple, $newValue);
+        } else {
+            $data = $this->getExistingToken($triple, true);
+        }
+        return $data;
+    }
+
+    private function getExistingToken(array $triple, bool $test = false): array
+    {
+        $test = $test ? true :
+        (
+            !empty($triple['value']) &&
+            !empty($triple['value']['refreshToken']) &&
+            !empty($triple['value']['accessToken']) &&
+            !empty($triple['value']['refreshTokenExpireTimeStamp']) &&
+            !empty($triple['value']['accessTokenExpireTimeStamp']) &&
+            $triple['value']['refreshTokenExpireTimeStamp'] > time() &&
+            $triple['value']['accessTokenExpireTimeStamp'] > time()
+        );
+        return $test
+            ? [
+                'access_token' => $triple['value']['accessToken']
+            ]
+            : [] ;
+    }
+
+    private function saveTriple(array $triple, array $value): array
+    {
+        try {
+            if ($triple['exist']) {
+                if (!empty($triple['lastCallTimeStamp'])) {
+                    $value['lastCallTimeStamp'] = $triple['lastCallTimeStamp'];
+                }
+                $this->updateTripleValue($triple['rawValue'], $value);
+            } else {
+                $this->createTripleValue($value);
+            }
+            return $this->getExistingToken(['value'=>$value], true);
+        } catch (NotUpdatedTripleException $th) {
+            $tokenData = $this->getTripleValue();
+            if (!empty($tokenData)) {
+                $data = $this->getExistingToken($tokenData, false);
+                if (!empty($data['access_token'])) {
+                    return $data;
+                }
+            }
+            throw $th;
+        }
     }
 
     /**
@@ -241,5 +327,60 @@ class HelloAssoService implements PaymentSystemServiceInterface
         return (!empty($this->params->get('shop')['helloAsso'])
             && !empty($this->params->get('shop')['helloAsso']['postApiToken'])
             && $this->params->get('shop')['helloAsso']['postApiToken'] === $token);
+    }
+
+    private function getTripleValue(): array
+    {
+        $triple = $this->tripleStore->getOne(self::TRIPLE_RESOURCE, self::TRIPLE_PROPERTY, '', '');
+        $value = empty($triple) ? null : json_decode($triple, true);
+        return (!empty($value)  && is_array($value))
+            ? ['exist' => true,'rawValue' => $triple,'value' => $value]
+            : ['exist' => !empty($triple),'rawValue' => $triple,'value' => []];
+    }
+
+    private function createTripleValue(array $value)
+    {
+        $result = $this->tripleStore->create(self::TRIPLE_RESOURCE, self::TRIPLE_PROPERTY, json_encode($value), '', '');
+        switch ($result) {
+            case 3:
+                // already created do nothing
+            case 0:
+                // all right
+                // do nothing
+                break;
+            case 1:
+            default:
+                // error
+                throw new Exception("HelloAssoTriple not updated");
+                break;
+        }
+    }
+
+    private function updateTripleValue(?string $oldRawValue, array $value)
+    {
+        $result = $this->tripleStore->update(
+            self::TRIPLE_RESOURCE,
+            self::TRIPLE_PROPERTY,
+            $oldRawValue,
+            json_encode($value),
+            '',
+            ''
+        );
+        switch ($result) {
+            case 2:
+                throw new NotUpdatedTripleException("HelloAssoTriple not existing with oldvalue, so not updated");
+                break;
+            case 3:
+                // already update, so not change done
+            case 0:
+                // all right
+                // do nothing
+                break;
+            case 1:
+            default:
+                // error
+                throw new Exception("HelloAssoTriple not updated");
+                break;
+        }
     }
 }
