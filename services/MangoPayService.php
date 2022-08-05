@@ -12,8 +12,8 @@
 namespace YesWiki\Shop\Service;
 
 use Exception;
-use MangoPay\MangoPayApi;
-use MangoPay\UserNatural;
+// use MangoPay\MangoPayApi;
+// use MangoPay\UserNatural;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use YesWiki\Shop\Entity\User;
 use YesWiki\Shop\Exception\EmptyMangoPayParamException;
@@ -60,11 +60,13 @@ class MangoPayService implements PaymentSystemServiceInterface
             mkdir($tmpFolder);
         }
 
-        $this->mangoPayApi = new MangoPayApi();
-        $this->mangoPayApi->Config->ClientId = $mangoPayParams['clientId'];
-        $this->mangoPayApi->Config->ClientPassword = $mangoPayParams['clientApiKey'];
-        $this->mangoPayApi->Config->TemporaryFolder = $tmpFolder;
-        $this->mangoPayApi->Config->BaseUrl = (self::SANDBOX_MODE) ? 'https://api.sandbox.mangopay.com' : 'https://api.mangopay.com';
+        // TODO uncomment when MangoPayApi installer
+        // activate with `composer add mangopay/php-sdk-v2`
+        // $this->mangoPayApi = new MangoPayApi();
+        // $this->mangoPayApi->Config->ClientId = $mangoPayParams['clientId'];
+        // $this->mangoPayApi->Config->ClientPassword = $mangoPayParams['clientApiKey'];
+        // $this->mangoPayApi->Config->TemporaryFolder = $tmpFolder;
+        // $this->mangoPayApi->Config->BaseUrl = (self::SANDBOX_MODE) ? 'https://api.sandbox.mangopay.com' : 'https://api.mangopay.com';
     }
 
     /**
@@ -86,8 +88,11 @@ class MangoPayService implements PaymentSystemServiceInterface
         $mangoUser->CountryOfResidence = $user->countryOfResidence;
         $mangoUser->Email = $user->email;
 
+        throw new Exception("Function ot available: need MangoPay Api installed");
+
         //Send the request
-        $mangoUser = $this->mangoPayApi->Users->Create($mangoUser);
+        // TODO uncomment whan mangopay installed
+        // $mangoUser = $this->mangoPayApi->Users->Create($mangoUser);
 
         return $mangoUser;
     }

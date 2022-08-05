@@ -12,7 +12,6 @@
 namespace YesWiki\Shop\Service;
 
 use Exception;
-use MangoPay\MangoPayApi;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use YesWiki\Shop\PaymentSystemServiceInterface;
 use YesWiki\Shop\Service\HelloAssoService;
