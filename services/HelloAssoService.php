@@ -310,7 +310,7 @@ class HelloAssoService implements PaymentSystemServiceInterface
         return $user;
     }
 
-    private function convertToPayments(array $data): array
+    public function convertToPayments(array $data): array
     {
         $payments = [];
         foreach ($data['data'] as $payment) {
