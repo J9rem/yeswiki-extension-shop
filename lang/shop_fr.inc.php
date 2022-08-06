@@ -20,5 +20,6 @@ return [
     'EDIT_CONFIG_HINT_SHOP[HELLOASSO][CLIENTAPIKEY]' => 'Clé api du client HelloAsso',
     'EDIT_CONFIG_HINT_SHOP[HELLOASSO][ORGANIZATIONSLUG]' => 'Identifiant de l\'organisation dans les urls',
     'EDIT_CONFIG_HINT_SHOP[HELLOASSO][POSTAPITOKEN]' => 'Clé api à fournir à HelloAsso pour l\'url de notification YesWiki',
+    'EDIT_CONFIG_HINT_SHOP[HELLOASSO][MINTIMEBETWEENCALLLS]' => 'Temps entre deux appels (entier positif)',
     
 ];

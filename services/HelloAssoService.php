@@ -119,6 +119,28 @@ class HelloAssoService implements PaymentSystemServiceInterface
     }
 
     /**
+     * check if possible to call api
+     * @return bool
+     */
+    private function canCheckApi(): bool
+    {
+        $shopParams = $this->params->get('shop');
+        $minTimeBetweenCalls = (
+            empty($shopParams['helloAsso']) ||
+            empty($shopParams['helloAsso']['minTimeBetweenCalls'])
+        ) ? 10
+        : max(10, intval($this->params->get('shop')['helloAsso']['minTimeBetweenCalls']));
+        $triple = $this->getTripleValue();
+        return
+            empty($triple) ||
+            empty($triple['exists']) ||
+            !$triple['exists'] ||
+            empty($triple['value']['lastCallTimeStamp']) ||
+            ($triple['value']['lastCallTimeStamp'] + $minTimeBetweenCalls) < time()
+        ;
+    }
+
+    /**
      * get forms via hello asso
      * @return array $forms
      */
@@ -147,6 +169,9 @@ class HelloAssoService implements PaymentSystemServiceInterface
      */
     public function getPayments(array $options): ?PaymentsInterface
     {
+        if (!$this->canCheckApi()) {
+            return null;
+        }
         $options = array_merge(['states' => ["Authorized"]], $options);
         $this->loadApi();
         if (!empty($options['formType']) && !empty($options['formSlug'])) {
@@ -162,6 +187,7 @@ class HelloAssoService implements PaymentSystemServiceInterface
                 $query = (isset($query) ? $query."&" : "?")."states[$key]=$value";
             }
         }
+        $this->updateLastCallTimeStamp();
         $results = $this->getRouteApi($url.($query ?? ""), "payments");
         
         $pageIndex = isset($results['pagination']) && isset($results['pagination']['pageIndex']) && is_scalar($results['pagination']['pageIndex'])
@@ -252,7 +278,7 @@ class HelloAssoService implements PaymentSystemServiceInterface
     private function saveTriple(array $triple, array $value): array
     {
         try {
-            if ($triple['exist']) {
+            if ($triple['exists']) {
                 if (!empty($triple['lastCallTimeStamp'])) {
                     $value['lastCallTimeStamp'] = $triple['lastCallTimeStamp'];
                 }
@@ -336,8 +362,18 @@ class HelloAssoService implements PaymentSystemServiceInterface
         $triple = $this->tripleStore->getOne(self::TRIPLE_RESOURCE, self::TRIPLE_PROPERTY, '', '');
         $value = empty($triple) ? null : json_decode($triple, true);
         return (!empty($value)  && is_array($value))
-            ? ['exist' => true,'rawValue' => $triple,'value' => $value]
-            : ['exist' => !empty($triple),'rawValue' => $triple,'value' => []];
+            ? ['exists' => true,'rawValue' => $triple,'value' => $value]
+            : ['exists' => !empty($triple),'rawValue' => $triple,'value' => []];
+    }
+
+    private function updateLastCallTimeStamp()
+    {
+        $triple = $this->getTripleValue();
+        if (!empty($triple['value'])) {
+            $newValue = $triple['value'];
+            $newValue['lastCallTimeStamp'] = time();
+            $this->saveTriple($triple, $newValue);
+        }
     }
 
     private function createTripleValue(array $value)

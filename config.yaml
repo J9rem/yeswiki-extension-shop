@@ -17,6 +17,7 @@ parameters:
         - clientApiKey
         - organizationSlug
         - postApiToken
+        - minTimeBetweenCalls
 
 services:
   _defaults:
