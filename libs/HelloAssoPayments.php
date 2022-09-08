@@ -44,7 +44,7 @@ class HelloAssoPayments implements PaymentsInterface
      *
      * @return string $nextPageToken
      */
-    public function getNextPageToken():string
+    public function getNextPageToken(): string
     {
         return $this->nextPageToken;
     }
@@ -53,17 +53,21 @@ class HelloAssoPayments implements PaymentsInterface
      * Iterator on payments only !
      * @return Payment[]
      */
-    public function getPayments():array
+    public function getPayments(): array
     {
         return $this->payments;
     }
 
     /* === Iterator interface === */
+    // change return of this method to keep compatible with php 7.3 (mixed is not managed)
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->payments[$this->position];
     }
 
+    // change return of this method to keep compatible with php 7.3 (mixed is not managed)
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->position;
@@ -86,8 +90,10 @@ class HelloAssoPayments implements PaymentsInterface
 
     /* === === */
 
-    
+
     /* === JsonSerializable interface === */
+    // change return of this method to keep compatible with php 7.3 (mixed is not managed)
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return [
