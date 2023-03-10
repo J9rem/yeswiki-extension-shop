@@ -119,7 +119,7 @@ class HelloAssoService implements PaymentSystemServiceInterface
         try {
             $output = json_decode($results, true, 512, JSON_THROW_ON_ERROR);
         } catch (Throwable $th) {
-            throw new Exception("Json Decode Error : {$th->getMessage()}", $th->getCode(),$th);
+            throw new Exception("Json Decode Error : {$th->getMessage()}".($th->getCode() == 4 ? " ; output : '".strval($results)."'": ''), $th->getCode(),$th);
         }
         if (is_null($output)){
             throw new Exception('Output is not json '.strval($results));
