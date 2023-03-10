@@ -14,6 +14,7 @@ namespace YesWiki\Shop\Service;
 use Exception;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 use YesWiki\Core\Service\TripleStore;
 use YesWiki\Shop\Entity\Payment;
 use YesWiki\Shop\Entity\User;
@@ -115,7 +116,15 @@ class HelloAssoService implements PaymentSystemServiceInterface
         if (!empty($error)) {
             throw new Exception("Error when getting $type via API : $error (httpcode: $httpCode)");
         }
-        return json_decode($results, true);
+        try {
+            $output = json_decode($results, true, 512, JSON_THROW_ON_ERROR);
+        } catch (Throwable $th) {
+            throw new Exception("Json Decode Error : {$th->getMessage()}", $th->getCode(),$th);
+        }
+        if (is_null($output)){
+            throw new Exception('Output is not json '.strval($results));
+        }
+        return $output;
     }
 
     /**
@@ -220,10 +229,10 @@ class HelloAssoService implements PaymentSystemServiceInterface
                 empty($triple['value']['accessTokenExpireTimeStamp']) ||
                 $triple['value']['refreshTokenExpireTimeStamp'] < time()) {
             $url = $this->baseUrl."oauth2/token";
-            $data = "client_id={$this->params->get('shop')['helloAsso']['clientId']}".
+            $postData = "client_id={$this->params->get('shop')['helloAsso']['clientId']}".
                 "&client_secret={$this->params->get('shop')['helloAsso']['clientApiKey']}".
                 "&grant_type=client_credentials";
-            $data = $this->getRouteApi($url, "api token", true, $data, false);
+            $data = $this->getRouteApi($url, "api token", true, $postData, false);
             if (empty($data) || empty($data['access_token'] || empty($data['refresh_token']))) {
                 throw new Exception("Token not generated");
             }
@@ -236,10 +245,10 @@ class HelloAssoService implements PaymentSystemServiceInterface
             $data = $this->saveTriple($triple, $newValue);
         } elseif ($triple['value']['accessTokenExpireTimeStamp'] < time()) {
             $url = $this->baseUrl."oauth2/token";
-            $data = "client_id={$this->params->get('shop')['helloAsso']['clientId']}".
+            $postData = "client_id={$this->params->get('shop')['helloAsso']['clientId']}".
                 "&refresh_token={$triple['value']['refreshToken']}".
                 "&grant_type=refresh_token";
-            $data = $this->getRouteApi($url, "api refresh token", true, $data, false);
+            $data = $this->getRouteApi($url, "api refresh token", true, $postData, false);
             if (empty($data) || empty($data['access_token'] || empty($data['refresh_token']))) {
                 throw new Exception("Token not generated");
             }
