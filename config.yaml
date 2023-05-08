@@ -6,6 +6,8 @@ parameters:
   shop:
     # 'helloasso', 'mangopay' and in future 'stripes', 'mollie' or other
     serviceName: 'helloasso'
+    lists:
+      ListeFormsProduit_id: 'ListeFormsProduit'
   shop_editable_config_params:
     - shop:
       - serviceName

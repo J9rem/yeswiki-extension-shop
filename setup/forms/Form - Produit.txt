@@ -1,0 +1,9 @@
+titre***Produit - {{bf_nom}}***Titre***
+texte***bf_nom***Nom*** *** ***Test*** ***text***1*** *** *** * *** % *** *** *** ***
+textelong***bf_description***Description*** *** *** *** ***wiki***0*** *** *** * *** % *** *** *** ***
+texte***bf_prix***Prix*** *** *** ***[0-9]+([\.\,][0-9]{1,2})?***text***1*** *** *** * *** % *** *** *** ***
+radio***ListeOuinon***Restreindre Quantité*** *** ***non***bf_restreindre_quantite*** ***1*** *** *** % *** % *** *** *** ***
+conditionschecking***bf_restreindre_quantite==oui*** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+texte***bf_quantite***Quantité***0*** *** *** ***number***1*** *** *** % *** % *** *** *** ***
+labelhtml***</div><!-- End of condition-->*** *** ***
+acls*** * *** % ***comments-closed*** ***non***bf_commentaires***0*** *** *** ***
