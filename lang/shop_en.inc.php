@@ -14,6 +14,7 @@ return [
     // actions/EditConfigAction.php
     'SHOP_UPDATE_TITLE' => '\'Shop\' extension (Voluntary work)',
     'SHOP_MANAGE' => 'Manage \'Shop\' extension (Voluntary work)',
+    'EDIT_CONFIG_HINT_SHOP[FORMS][PRODUCTS]' => 'Product forms ids (separated with commas)',
     'EDIT_CONFIG_GROUP_SHOP' => '"Shop" extension',
     'EDIT_CONFIG_HINT_SHOP[SERVICENAME]' => 'Payment system name (helloasso) - IN TEST',
     'EDIT_CONFIG_HINT_SHOP[MANGOPAY][CLIENTID]' => 'MangoPay client ID',
