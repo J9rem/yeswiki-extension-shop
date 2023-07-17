@@ -24,10 +24,8 @@ class UpdateHandler__ extends YesWikiHandler
         if (!$this->wiki->UserIsAdmin()) {
             return null;
         }
-        dump($formManager->getAll());
 
         $formIdsParam = $this->params->get('shop')['forms']['products'] ?? '';
-        dump($formIdsParam);
 
         if ($formIdsParam == '') {
             $this->createDefaultForm();
@@ -50,8 +48,8 @@ class UpdateHandler__ extends YesWikiHandler
     {
         // get services
         $formManager = $this->getService(FormManager::class);
-        // get Form
         if (!empty($formId) && intval($formId) === intval(strval($formId))) {
+            // get Form
             $form = $formManager->getOne($formId);
             if (!$form) {
                 return;
@@ -71,7 +69,7 @@ class UpdateHandler__ extends YesWikiHandler
                 'message' => str_replace(
                     ['{formName}', '{filePath}'],
                     ['Produit', self::PATHS['forms']['Produit']],
-                    _t('BENEVOLAT_UPDATE_FORM_ERROR')
+                    _t('SHOP_UPDATE_FORM_ERROR')
                 ),
             ]);
             return;
