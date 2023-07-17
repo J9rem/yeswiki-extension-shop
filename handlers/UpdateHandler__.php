@@ -30,11 +30,8 @@ class UpdateHandler__ extends YesWikiHandler
             $this->formsIds[$formName] = $this->params->get('shop')['forms'][$formName.'_id'] ?? null;
         }
 
-        // We get the param products list
-        $lists = $this->params->get('shop')['lists'];
-
-        foreach ($lists as $key => $value) {
-            $this->getFormOrCreate($value);
+        foreach ($this->formsIds as $formId => $formName) {
+            $this->getFormOrCreate($formName);
         }
 
         return null;
