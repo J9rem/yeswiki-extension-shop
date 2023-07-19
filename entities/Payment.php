@@ -11,6 +11,7 @@
 
 namespace YesWiki\Shop\Entity;
 
+use Exception;
 use JsonSerializable;
 
 class Payment implements JsonSerializable
