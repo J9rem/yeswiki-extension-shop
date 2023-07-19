@@ -26,7 +26,6 @@ class UpdateHandler__ extends YesWikiHandler
 
         $formIdsParam = $this->params->get('shop')['forms']['products'] ?? '';
         $productsFormIds = array_filter(array_map('trim', explode(',', $formIdsParam)));
-        $formManager = $this->getService(FormManager::class);
 
         if (empty($productsFormIds)) {
             $formId = $this->createDefaultForm();
