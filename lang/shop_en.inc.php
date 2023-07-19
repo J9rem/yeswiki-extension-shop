@@ -12,9 +12,7 @@
 return [
 
     // actions/EditConfigAction.php
-    'SHOP_UPDATE_TITLE' => '\'Shop\' extension (Voluntary work)',
     'SHOP_UPDATE_FORM_ERROR' => "Not possibe to update the '{formName}' because the file '{filePath}' has not been found.",
-    'SHOP_MANAGE' => 'Manage \'Shop\' extension (Voluntary work)',
     'EDIT_CONFIG_HINT_SHOP[FORMS][PRODUCTS]' => 'Product forms ids (separated with commas)',
     'EDIT_CONFIG_GROUP_SHOP' => '"Shop" extension',
     'EDIT_CONFIG_HINT_SHOP[SERVICENAME]' => 'Payment system name (helloasso) - IN TEST',

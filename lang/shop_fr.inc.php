@@ -12,9 +12,7 @@
 return [
 
     // actions/EditConfigAction.php
-    'SHOP_UPDATE_TITLE' => 'Extension Shop',
     'SHOP_UPDATE_FORM_ERROR' => "Impossible de mettre à jour le formulaire '{formName}' car le fichier '{filePath}' est introuvable.",
-    'SHOP_MANAGE' => 'Gérer l\'extension Shop',
     'EDIT_CONFIG_HINT_SHOP[FORMS][PRODUCTS]' => 'Identifiants de formulaires produits (séparés par des ,)',
     'EDIT_CONFIG_GROUP_SHOP' => 'Extension "shop"',
     'EDIT_CONFIG_HINT_SHOP[SERVICENAME]' => 'Nom du système de paiement (helloasso) - EN TEST',

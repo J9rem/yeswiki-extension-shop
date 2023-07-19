@@ -17,7 +17,6 @@ class UpdateHandler__ extends YesWikiHandler
 
     public function run()
     {
-        $formManager = $this->getService(FormManager::class);
         if ($this->getService(SecurityController::class)->isWikiHibernated()) {
             throw new \Exception(_t('WIKI_IN_HIBERNATION'));
         };
@@ -26,13 +25,15 @@ class UpdateHandler__ extends YesWikiHandler
         }
 
         $formIdsParam = $this->params->get('shop')['forms']['products'] ?? '';
+        $productsFormIds = array_filter(array_map('trim', explode(',', $formIdsParam)));
+        $formManager = $this->getService(FormManager::class);
 
-        if ($formIdsParam == '') {
-            $this->createDefaultForm();
+        if (empty($productsFormIds)) {
+            $formId = $this->createDefaultForm();
+            $this->updateWakkaConfig($formId);
             return;
         }
 
-        $productsFormIds = array_filter(array_map('trim', explode(',', $formIdsParam)));
         foreach ($productsFormIds as $productsFormId) {
             $this->getFormOrCreate($productsFormId);
         }
@@ -42,24 +43,22 @@ class UpdateHandler__ extends YesWikiHandler
 
     /**
      * @param string $formId
-     * @return null|string $formId
      */
-    private function getFormOrCreate(string $formId)
+    private function getFormOrCreate(string $formId): void
     {
         // get services
         $formManager = $this->getService(FormManager::class);
-        if (!empty($formId) && intval($formId) === intval(strval($formId))) {
+        if (!empty($formId)) {
             // get Form
             $form = $formManager->getOne($formId);
-            if (!$form) {
+            if (!empty($form)) {
                 return;
             }
-            $this->createDefaultForm();
+            $this->createDefaultForm($formId);
         }
-        return null;
     }
 
-    private function createDefaultForm(): void
+    private function createDefaultForm(string $formId = ''): string
     {
         $formManager = $this->getService(FormManager::class);
 
@@ -72,11 +71,14 @@ class UpdateHandler__ extends YesWikiHandler
                     _t('SHOP_UPDATE_FORM_ERROR')
                 ),
             ]);
-            return;
+            return '';
         }
 
         $formTemplate = file_get_contents(self::PATHS['forms']['Produit']);
-        $formId = $formManager->findNewId();
+
+        if (empty($formId)){
+            $formId = $formManager->findNewId();
+        }
         if (!$formManager->create([
             'bn_label_nature' => 'Produit',
             'bn_template' => $formTemplate,
@@ -86,13 +88,13 @@ class UpdateHandler__ extends YesWikiHandler
             'bn_condition' => '',
             'bn_id_nature' => $formId,
         ])) {
-            return;
+            return '';
         };
 
-        $this->updateWakkaConfig($formId);
+        return strval($formId);
     }
 
-    private function updateWakkaConfig($formId)
+    private function updateWakkaConfig($formId): void
     {
         if (!empty($formId)) {
             include_once 'tools/templates/libs/Configuration.php';
@@ -114,8 +116,6 @@ class UpdateHandler__ extends YesWikiHandler
             $config->write();
 
             unset($config);
-            return $formId;
         }
-        return null;
     }
 }
