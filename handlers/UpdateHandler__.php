@@ -4,6 +4,7 @@ namespace YesWiki\Shop;
 
 use Configuration;
 use YesWiki\Bazar\Service\FormManager;
+use YesWiki\Core\Service\ConfigurationService;
 use YesWiki\Core\YesWikiHandler;
 use YesWiki\Security\Controller\SecurityController;
 
@@ -15,7 +16,7 @@ class UpdateHandler__ extends YesWikiHandler
         ],
     ];
 
-    public function run()
+    public function run(): ?string
     {
         if ($this->getService(SecurityController::class)->isWikiHibernated()) {
             throw new \Exception(_t('WIKI_IN_HIBERNATION'));
@@ -26,35 +27,42 @@ class UpdateHandler__ extends YesWikiHandler
 
         $formIdsParam = $this->params->get('shop')['forms']['products'] ?? '';
         $productsFormIds = array_filter(array_map('trim', explode(',', $formIdsParam)));
+        $message = '';
 
         if (empty($productsFormIds)) {
             $formId = $this->createDefaultForm();
             $this->updateWakkaConfig($formId);
-            return;
+            $message .= empty($formId)
+                ? "<br/>❌ error when creating a new products' form"
+                : "<br/>✅ New form $formId created with new content";
         }
 
         foreach ($productsFormIds as $productsFormId) {
-            $this->getFormOrCreate($productsFormId);
+            $returnTxt = $this->getFormOrCreate($productsFormId);
+            $message .= empty($returnTxt)
+                ? "<br/>ℹ️ $productsFormId already existing "
+                : "<br/>✅ $productsFormId created";
         }
 
-        return null;
+        return $message;
     }
 
     /**
      * @param string $formId
+     * @return string $formId if created
      */
-    private function getFormOrCreate(string $formId): void
+    private function getFormOrCreate(string $formId): string
     {
         // get services
         $formManager = $this->getService(FormManager::class);
         if (!empty($formId)) {
             // get Form
             $form = $formManager->getOne($formId);
-            if (!empty($form)) {
-                return;
-            }
-            $this->createDefaultForm($formId);
+            return empty($form)
+                ? $this->createDefaultForm($formId)
+                : '';
         }
+        return '';
     }
 
     private function createDefaultForm(string $formId = ''): string
@@ -96,8 +104,8 @@ class UpdateHandler__ extends YesWikiHandler
     private function updateWakkaConfig($formId): void
     {
         if (!empty($formId)) {
-            include_once 'tools/templates/libs/Configuration.php';
-            $config = new Configuration('wakka.config.php');
+            $configurationService = $this->getService(ConfigurationService::class);
+            $config = $configurationService->getConfiguration('wakka.config.php');
             $config->load();
 
             $baseKey = 'shop';
