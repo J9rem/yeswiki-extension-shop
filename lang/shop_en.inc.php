@@ -13,7 +13,7 @@ return [
 
     // actions/EditConfigAction.php
     'SHOP_UPDATE_FORM_ERROR' => "Not possibe to update the '{formName}' because the file '{filePath}' has not been found.",
-    'EDIT_CONFIG_HINT_SHOP[FORMS][PRODUCTS]' => 'Product forms ids (separated with commas) - appeler /update pour mise à jour',
+    'EDIT_CONFIG_HINT_SHOP[FORMS][PRODUCTS]' => 'Product forms ids (separated with commas) - call /update to update forms',
     'EDIT_CONFIG_GROUP_SHOP' => '"Shop" extension',
     'EDIT_CONFIG_HINT_SHOP[SERVICENAME]' => 'Payment system name (helloasso) - IN TEST',
     'EDIT_CONFIG_HINT_SHOP[MANGOPAY][CLIENTID]' => 'MangoPay client ID',
