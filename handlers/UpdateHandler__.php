@@ -2,7 +2,6 @@
 
 namespace YesWiki\Shop;
 
-use Configuration;
 use YesWiki\Bazar\Service\FormManager;
 use YesWiki\Core\Service\ConfigurationService;
 use YesWiki\Core\YesWikiHandler;
@@ -109,7 +108,7 @@ class UpdateHandler__ extends YesWikiHandler
             $config->load();
 
             $baseKey = 'shop';
-            $tmp = isset($config->$baseKey) ? $config->$baseKey : [];
+            $tmp = $config->$baseKey ?? [];
             if (!isset($tmp['forms']['products'])) {
                 $tmp['forms'] = [
                     'products' => strval($formId)
