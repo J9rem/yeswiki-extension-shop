@@ -37,13 +37,28 @@ class UpdateHandler__ extends YesWikiHandler
         }
 
         foreach ($productsFormIds as $productsFormId) {
-            $returnTxt = $this->getFormOrCreate($productsFormId);
-            $message .= empty($returnTxt)
-                ? "<br/>ℹ️ $productsFormId already existing "
-                : "<br/>✅ $productsFormId created";
+            if (!is_numeric($productsFormId)) {
+                $message .= "<br/>❌ formId <strong>'$productsFormId'</strong> should be an integer";
+            } else {
+                $returnTxt = $this->getFormOrCreate($productsFormId);
+                $message .= empty($returnTxt)
+                    ? "<br/>ℹ️ form $productsFormId already existing "
+                    : "<br/>✅ form $productsFormId created";
+            }
         }
 
-        return $message;
+        // set output
+        $message = <<<HTML
+        <b>Extension shop</b>
+        $message<br/>
+        <hr/>
+        HTML;
+        $this->output = str_replace(
+            '<!-- end handler /update -->',
+            $message.'<!-- end handler /update -->',
+            $this->output
+        );
+        return null;
     }
 
     /**
