@@ -3,6 +3,7 @@
 namespace YesWiki\Shop;
 
 use YesWiki\Bazar\Service\FormManager;
+use YesWiki\Bazar\Service\ListManager;
 use YesWiki\Core\Service\ConfigurationService;
 use YesWiki\Core\YesWikiHandler;
 use YesWiki\Security\Controller\SecurityController;
@@ -13,6 +14,9 @@ class UpdateHandler__ extends YesWikiHandler
         'forms' => [
             'Produit' => 'tools/shop/setup/forms/Form - Produit.txt',
         ],
+        'lists' => [
+            'OuiNonShop' => 'tools/shop/setup/lists/OuiNonShop.json'
+        ]
     ];
 
     public function run(): ?string
@@ -23,6 +27,8 @@ class UpdateHandler__ extends YesWikiHandler
         if (!$this->wiki->UserIsAdmin()) {
             return null;
         }
+
+        $this->installDefaultList();
 
         $formIdsParam = $this->params->get('shop')['forms']['products'] ?? '';
         $productsFormIds = array_filter(array_map('trim', explode(',', $formIdsParam)));
@@ -137,6 +143,16 @@ class UpdateHandler__ extends YesWikiHandler
             $config->write();
 
             unset($config);
+        }
+    }
+
+    private function installDefaultList()
+    {
+        $listManager = $this->getService(ListManager::class);
+        $listeValues = json_decode(file_get_contents(self::PATHS['lists']['OuiNonShop']), true);
+
+        if (empty($listManager->getOne('ListeOuiNonShop'))) {
+            $listManager->create('OuiNonShop', $listeValues['labels']);
         }
     }
 }
