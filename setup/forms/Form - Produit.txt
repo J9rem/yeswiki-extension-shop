@@ -1,7 +1,7 @@
 titre***Produit - {{bf_nom}}***Titre***
 texte***bf_nom***Nom*** *** *** *** ***text***1*** *** *** * *** % *** *** *** ***
 textelong***bf_description***Description*** *** *** *** ***wiki***0*** *** *** * *** % *** *** *** ***
-texte***bf_prix***Prix*** *** *** ***(0|[1-9][0-9]+|[1-9][0-9]+[.,][0-9]{1,2}|[0-9][.,][0-9]{1,2})***text***1*** *** *** * *** % *** *** *** ***
+texte***bf_prix***Prix*** *** *** ***^(?:0(?:[,.]0+)?|[1-9]\d*(?:[,.]\d{1,2})?)$***text***1*** *** *** * *** % *** *** *** ***
 radio***ListeOuinonShop***Restreindre Quantité*** *** ***non***bf_restreindre_quantite*** ***1*** *** *** % ***@admins*** *** *** ***
 conditionschecking***bf_restreindre_quantite==oui*** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
 texte***bf_quantite***Quantité***0*** *** *** ***number***1*** *** *** % *** % *** *** *** ***
