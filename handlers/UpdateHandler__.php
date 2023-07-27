@@ -37,13 +37,13 @@ class UpdateHandler__ extends YesWikiHandler
         }
 
         foreach ($productsFormIds as $productsFormId) {
-            if (!is_numeric($productsFormId)) {
-                $message .= "<br/>❌ formId <strong>'$productsFormId'</strong> should be an integer";
-            } else {
+            if (strval($productsFormId) == strval(intval($productsFormId)) && intval($productsFormId) > 0) {
                 $returnTxt = $this->getFormOrCreate($productsFormId);
                 $message .= empty($returnTxt)
                     ? "<br/>ℹ️ form $productsFormId already existing "
                     : "<br/>✅ form $productsFormId created";
+            } else {
+                $message .= "<br/>❌ formId <strong>'$productsFormId'</strong> should be a positive integer";
             }
         }
 
