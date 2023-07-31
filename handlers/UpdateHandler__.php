@@ -28,11 +28,10 @@ class UpdateHandler__ extends YesWikiHandler
             return null;
         }
 
-        $this->installDefaultList();
+        $message = $this->installDefaultList();
 
         $formIdsParam = $this->params->get('shop')['forms']['products'] ?? '';
         $productsFormIds = array_filter(array_map('trim', explode(',', $formIdsParam)));
-        $message = '';
 
         if (empty($productsFormIds)) {
             $formId = $this->createDefaultForm();
@@ -146,13 +145,15 @@ class UpdateHandler__ extends YesWikiHandler
         }
     }
 
-    private function installDefaultList()
+    private function installDefaultList(): string
     {
         $listManager = $this->getService(ListManager::class);
         $listeValues = json_decode(file_get_contents(self::PATHS['lists']['OuiNonShop']), true);
 
         if (empty($listManager->getOne('ListeOuiNonShop'))) {
             $listManager->create('OuiNonShop', $listeValues['labels']);
+            return '<br/>✅ List "OuiNonShop" created !';
         }
+        return '';
     }
 }
