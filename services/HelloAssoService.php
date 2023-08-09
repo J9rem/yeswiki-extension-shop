@@ -16,13 +16,13 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 use YesWiki\Core\Service\TripleStore;
+use YesWiki\Shop\Entity\HelloAssoPayments;
 use YesWiki\Shop\Entity\Payment;
+use YesWiki\Shop\Entity\PaymentsInterface;
 use YesWiki\Shop\Entity\User;
 use YesWiki\Shop\Exception\EmptyHelloAssoParamException;
 use YesWiki\Shop\Exception\NotUpdatedTripleException;
-use YesWiki\Shop\HelloAssoPayments;
-use YesWiki\Shop\PaymentsInterface;
-use YesWiki\Shop\PaymentSystemServiceInterface;
+use YesWiki\Shop\Service\PaymentSystemServiceInterface;
 use YesWiki\Wiki;
 
 class HelloAssoService implements PaymentSystemServiceInterface

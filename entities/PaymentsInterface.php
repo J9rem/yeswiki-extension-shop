@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace YesWiki\Shop;
+namespace YesWiki\Shop\Entity;
 
 use Iterator;
 use JsonSerializable;

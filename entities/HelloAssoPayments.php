@@ -9,13 +9,13 @@
  * file that was distributed with this source code.
  */
 
-namespace YesWiki\Shop;
+namespace YesWiki\Shop\Entity;
 
 use Exception;
 use Iterator;
 use YesWiki\Shop\Entity\Payment;
 use YesWiki\Shop\Entity\User;
-use YesWiki\Shop\PaymentsInterface;
+use YesWiki\Shop\Entity\PaymentsInterface;
 
 class HelloAssoPayments implements PaymentsInterface
 {

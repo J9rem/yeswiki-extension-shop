@@ -15,10 +15,10 @@ use Exception;
 // use MangoPay\MangoPayApi;
 // use MangoPay\UserNatural;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use YesWiki\Shop\Entity\PaymentsInterface;
 use YesWiki\Shop\Entity\User;
 use YesWiki\Shop\Exception\EmptyMangoPayParamException;
-use YesWiki\Shop\PaymentsInterface;
-use YesWiki\Shop\PaymentSystemServiceInterface;
+use YesWiki\Shop\Service\PaymentSystemServiceInterface;
 
 class MangoPayService implements PaymentSystemServiceInterface
 {

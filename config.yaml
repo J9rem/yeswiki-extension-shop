@@ -26,6 +26,7 @@ services:
 
   YesWiki\Shop\Service\:
     resource: 'services/*.php'
+    exclude: 'services/{PaymentSystemServiceInterface.php}'
   
   YesWiki\Shop\Controller\:
     resource: 'controllers/*.php'

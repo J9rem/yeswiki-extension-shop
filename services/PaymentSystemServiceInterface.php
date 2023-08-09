@@ -9,11 +9,11 @@
  * file that was distributed with this source code.
  */
 
-namespace YesWiki\Shop;
+namespace YesWiki\Shop\Service;
 
 use Exception;
+use YesWiki\Shop\Entity\PaymentsInterface;
 use YesWiki\Shop\Entity\User;
-use YesWiki\Shop\PaymentsInterface;
 
 interface PaymentSystemServiceInterface
 {

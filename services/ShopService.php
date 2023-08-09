@@ -13,9 +13,9 @@ namespace YesWiki\Shop\Service;
 
 use Exception;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use YesWiki\Shop\PaymentSystemServiceInterface;
 use YesWiki\Shop\Service\HelloAssoService;
 use YesWiki\Shop\Service\MangoPayService;
+use YesWiki\Shop\Service\PaymentSystemServiceInterface;
 use YesWiki\Wiki;
 
 class ShopService
