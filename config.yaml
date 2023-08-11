@@ -6,9 +6,13 @@ parameters:
   shop:
     # 'helloasso', 'mangopay' and in future 'stripes', 'mollie' or other
     serviceName: 'helloasso'
+    forms:
+      products: ''
   shop_editable_config_params:
     - shop:
       - serviceName
+      - forms:
+          - products
       - mangoPay:
         - clientId
         - clientApiKey
