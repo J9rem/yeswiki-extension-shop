@@ -20,6 +20,7 @@ class Payment implements JsonSerializable
     public $payer;
     public $amount;
     public $date;
+    public $formSlug;
 
     public function __construct(array $values)
     {
@@ -41,6 +42,7 @@ class Payment implements JsonSerializable
         $this->payer = $values['payer'];
         $this->amount = floatval($values['amount']);
         $this->date = strval($values['date']);
+        $this->formSlug = !empty($values['formSlug']) ? strval($values['formSlug']) : '';
     }
 
     /* === JsonSerializable interface === */
@@ -53,6 +55,7 @@ class Payment implements JsonSerializable
             'payer' => $this->payer,
             'amount' => $this->amount,
             'date' => $this->date,
+            'formSlug' => $this->formSlug,
             ];
     }
     /* === === */

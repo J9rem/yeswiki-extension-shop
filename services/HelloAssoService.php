@@ -118,6 +118,9 @@ class HelloAssoService implements PaymentSystemServiceInterface
             throw new Exception("Error when getting $type via API : $error (httpcode: $httpCode)");
         }
         try {
+            if (empty($results)){
+                throw new Exception("Empty result when getting '$url' for '$type'");
+            }
             $output = json_decode($results, true, 512, JSON_THROW_ON_ERROR);
         } catch (Throwable $th) {
             throw new Exception("Json Decode Error : {$th->getMessage()}".($th->getCode() == 4 ? " ; output : '".strval($results)."'": ''), $th->getCode(),$th);
@@ -189,16 +192,21 @@ class HelloAssoService implements PaymentSystemServiceInterface
         } else {
             $url = $this->baseUrl."v5/organizations/{$this->getOrganizationSlug()}/payments";
         }
+        $queries = [];
         if (!empty($options['email'])) {
+            $queries['userSearchKey'] = urlencode($options['email']);
             $query = (isset($query) ? $query."&" : "?")."userSearchKey=".urlencode($options['email']);
         }
         if (!empty($options['states'])) {
             foreach ($options['states'] as $key => $value) {
-                $query = (isset($query) ? $query."&" : "?")."states[$key]=$value";
+                $queries[$key ] = $value;
             }
         }
+        $query = empty($queries) ? '' : '?'.implode('&',array_map(function($k) use($queries){
+            return "$k={$queries[$k]}";
+        },array_keys($queries)));
         $this->updateLastCallTimeStamp();
-        $results = $this->getRouteApi($url.($query ?? ""), "payments");
+        $results = $this->getRouteApi($url.$query, "payments");
         
         $pageIndex = isset($results['pagination']) && isset($results['pagination']['pageIndex']) && is_scalar($results['pagination']['pageIndex'])
             ? intval($results['pagination']['pageIndex'])
@@ -214,6 +222,27 @@ class HelloAssoService implements PaymentSystemServiceInterface
             'nextPageToken' => ($pageIndex < $totalPages) ? $continuationToken : "",
         ]);
         return $helloAssoPayments;
+    }
+
+    /**
+     * get payment via hello asso
+     * @param string $id
+     * @return Payment|null $payment
+     */
+    public function getPayment(string $id): ?Payment
+    {
+        if (!$this->canCheckApi()) {
+            return null;
+        }
+        $this->loadApi();
+        $this->updateLastCallTimeStamp();
+        $result = $this->getRouteApi("{$this->baseUrl}v5/payments/$id", "payment");
+        if (empty($result) || !is_array($result) || empty($result['payer'])){
+            return null;
+        }
+        
+        $payments = $this->convertToPayments(['data'=>[$result]]);
+        return $payments[0] ?? null;
     }
 
     /**
@@ -355,6 +384,9 @@ class HelloAssoService implements PaymentSystemServiceInterface
             $newData['amount'] = floatval($payment['amount'])/100;
             $newData['date'] = $payment['date'];
             $newData['payer'] = $this->convertToUser($payment['payer']);
+            if (!empty($payment['order']) && !empty($payment['order']['formSlug'])){
+                $newData['formSlug'] = $payment['order']['formSlug'];
+            }
             $payments[] = new Payment($newData);
         }
         return $payments;
