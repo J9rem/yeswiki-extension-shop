@@ -384,8 +384,13 @@ class HelloAssoService implements PaymentSystemServiceInterface
             $newData['amount'] = floatval($payment['amount'])/100;
             $newData['date'] = $payment['date'];
             $newData['payer'] = $this->convertToUser($payment['payer']);
-            if (!empty($payment['order']) && !empty($payment['order']['formSlug'])){
-                $newData['formSlug'] = $payment['order']['formSlug'];
+            if (!empty($payment['order'])){
+                if(!empty($payment['order']['formSlug'])){
+                    $newData['formSlug'] = $payment['order']['formSlug'];
+                }
+                if (!empty($payment['order']['formType'])){
+                    $newData['formType'] = $payment['order']['formType'];
+                }
             }
             $payments[] = new Payment($newData);
         }
