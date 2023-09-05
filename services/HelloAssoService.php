@@ -199,8 +199,14 @@ class HelloAssoService implements PaymentSystemServiceInterface
         }
         if (!empty($options['states'])) {
             foreach ($options['states'] as $key => $value) {
-                $queries[$key ] = $value;
+                $queries[$key] = $value;
             }
+        }
+        if (!empty($options['from'])) {
+            $queries['from'] = $options['from'];
+        }
+        if (!empty($options['to'])) {
+            $queries['to'] = $options['to'];
         }
         $query = empty($queries) ? '' : '?'.implode('&',array_map(function($k) use($queries){
             return "$k={$queries[$k]}";
