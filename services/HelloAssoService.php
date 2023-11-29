@@ -195,7 +195,6 @@ class HelloAssoService implements PaymentSystemServiceInterface
         $queries = [];
         if (!empty($options['email'])) {
             $queries['userSearchKey'] = urlencode($options['email']);
-            $query = (isset($query) ? $query."&" : "?")."userSearchKey=".urlencode($options['email']);
         }
         if (!empty($options['states'])) {
             foreach ($options['states'] as $key => $value) {
