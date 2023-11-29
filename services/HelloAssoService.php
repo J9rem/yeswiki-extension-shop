@@ -387,9 +387,8 @@ class HelloAssoService implements PaymentSystemServiceInterface
         foreach ($data['data'] as $payment) {
             $newData = [];
             $newData['id'] = $payment['id'];
-            $newData['amount'] = ($payment['status'] ?? 'unknown') === 'Authorized'
-                ? floatval($payment['amount'])/100
-                : 0;
+            $newData['status'] = $payment['status'] ?? 'unknown';
+            $newData['amount'] = floatval($payment['amount'] ?? 0)/100;
             $newData['date'] = $payment['date'];
             $newData['payer'] = $this->convertToUser($payment['payer']);
             if (!empty($payment['order'])){
