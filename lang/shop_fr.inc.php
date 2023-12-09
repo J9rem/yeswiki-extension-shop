@@ -12,8 +12,6 @@
 return [
 
     // actions/EditConfigAction.php
-    'SHOP_UPDATE_FORM_ERROR' => "Impossible de mettre à jour le formulaire '{formName}' car le fichier '{filePath}' est introuvable.",
-    'EDIT_CONFIG_HINT_SHOP[FORMS][PRODUCTS]' => 'Identifiants de formulaires produits (séparés par des ,) - appeler /update pour mise à jour',
     'EDIT_CONFIG_GROUP_SHOP' => 'Extension "shop"',
     'EDIT_CONFIG_HINT_SHOP[SERVICENAME]' => 'Nom du système de paiement (helloasso) - EN TEST',
     'EDIT_CONFIG_HINT_SHOP[MANGOPAY][CLIENTID]' => 'Identifiant client MangoPay',
