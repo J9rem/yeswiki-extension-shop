@@ -398,6 +398,7 @@ class HelloAssoService implements PaymentSystemServiceInterface
                     $newData['formType'] = $payment['order']['formType'];
                 }
             }
+            $newData['receiptUrl'] = $payment['paymentReceiptUrl'] ?? '';
             $payments[] = new Payment($newData);
         }
         return $payments;

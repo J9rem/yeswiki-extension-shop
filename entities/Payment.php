@@ -23,6 +23,7 @@ class Payment implements JsonSerializable
     public $date;
     public $formSlug;
     public $formType;
+    public $receiptUrl;
 
     public function __construct(array $values)
     {
@@ -47,6 +48,7 @@ class Payment implements JsonSerializable
         $this->date = strval($values['date']);
         $this->formSlug = !empty($values['formSlug']) ? strval($values['formSlug']) : '';
         $this->formType = !empty($values['formType']) ? strval($values['formType']) : '';
+        $this->receiptUrl = (!empty($values['receiptUrl']) && is_string($values['receiptUrl'])) ? $values['receiptUrl'] : '';
     }
 
     /* === JsonSerializable interface === */
@@ -62,7 +64,8 @@ class Payment implements JsonSerializable
             'formType' => $this->formType,
             'formSlug' => $this->formSlug,
             'status' => $this->status,
-            ];
+            'receiptUrl' => $this->receiptUrl,
+        ];
     }
     /* === === */
 }
