@@ -530,4 +530,60 @@ class HelloAssoService implements PaymentSystemServiceInterface
                 break;
         }
     }
+
+    /**
+     * register payment Receipt in file
+     * @param string $paymentId
+     * @param string $fileName
+     * @throws Exception
+     */
+    public function getReceiptForPayment(string $paymentId,string $fileName)
+    {
+        if (empty($paymentId)){
+            throw new Exception('$paymentId should not be empty');
+        }
+        $payment = $this->getPayment($paymentId);
+        if (empty($payment)){
+            throw new Exception('Payment not found');
+        }
+        if (empty($payment->receiptUrl) || !is_string($payment->receiptUrl)){
+            throw new Exception('Payment does not have a receiptUrl !');
+        }
+        $this->getReceiptForPaymentFromReceiptUrl($payment->receiptUrl,$fileName);
+    }
+
+    
+    /**
+     * register payment Receipt in file from receiptUrl
+     * @param string $receiptUrl
+     * @param string $fileName
+     * @throws Exception
+     */
+    public function getReceiptForPaymentFromReceiptUrl(string $receiptUrl,string $fileName)
+    {
+        if (empty($receiptUrl)){
+            throw new Exception('$receiptUrl should not be empty!');
+        }
+        $quoted = preg_quote('https://www.helloasso.com/','/');
+        if (!preg_match("/^$quoted.*$/",$receiptUrl)){
+            throw new Exception('$receiptUrl should be url to helloasso.com!');
+        }
+        if (empty($fileName)){
+            throw new Exception('$fileName should not be empty!');
+        }
+        if (is_file($fileName) && file_exists($fileName)){
+            throw new Exception('$fileName is already exsisting!');
+        }
+        $dir = dirname($fileName);
+        if (!is_dir($dir)){
+            throw new Exception('Directory of $fileName is not exsisting!');
+        }
+        if (!is_writable($dir)){
+            throw new Exception('Directory of $fileName is not writable!');
+        }
+
+        // TODO connect to hello asso
+        // get file using cookies
+        // close session
+    }
 }
