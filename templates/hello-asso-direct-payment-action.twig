@@ -15,7 +15,7 @@
 {{ include_javascript('tools/shop/javascripts/helloasso-direct-payment-form.js',false,true) }}
  
 <div class="helloasso-direct-payment-form">
-    <div class="app" data-args="{{ args|json_encode}}" style="display:none;">
+    <div class="app" data-args="{{ args|json_encode}}" data-token="{{ token }}"  style="display:none;">
         <div class="header-for-form">
             {{ _t('SHOP_HELLOASSO_DIRECT_PAYMENT_HEADER',{
                 sum:"#{args.totalAmount // 100 },#{(args.totalAmount % 100) < 10 ? '0' : ''}#{args.totalAmount % 100} €" 

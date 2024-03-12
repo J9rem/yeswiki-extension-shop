@@ -69,7 +69,16 @@ let appParams = {
                     window.wiki.url('?api/shop/helloasso/directpayment/getformurl'),
                     'post',
                     {
-                        payer:this.payer
+                        payer:this.payer,
+                        token: this.token,
+                        itemName: this.args?.itemName ?? '',
+                        totalAmount: this.args?.totalAmount ?? '',
+                        meta: this.args?.meta ?? [],
+                        meta: this.args?.meta ?? [],
+                        backUrl: this.args?.['shop backUrl'] ?? '',
+                        errorUrl: this.args?.['shop errorUrl'] ?? '',
+                        returnUrl: this.args?.['shop returnUrl'] ?? '',
+                        containsDonation: this.args?.containsDonation ?? false
                     }
                 )
                 .then((data)=>{
@@ -79,7 +88,7 @@ let appParams = {
                     this.error = true
                     asyncHelper.manageError(error)
                     if (this.args?.['shop errorUrl'].length > 0){
-                        window.location = this.args['shop errorUrl']
+                        // window.location = this.args['shop errorUrl']
                     }
                 }).finally(()=>{
                     this.refreshing = false
