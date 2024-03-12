@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use YesWiki\Core\ApiResponse;
 use YesWiki\Core\YesWikiController;
+use YesWiki\Shop\Controller\HelloAssoDirectPaymentController;
 use YesWiki\Shop\Service\EventDispatcher;
 use YesWiki\Shop\Service\HelloAssoService;
 
@@ -30,6 +31,16 @@ class ApiController extends YesWikiController
         }
         $this->getService(EventDispatcher::class)->dispatch('shop.helloasso.api.called', ['post' => $_POST]);
         return new ApiResponse(null, Response::HTTP_OK);
+    }
+
+    
+    /**
+     * @Route("/api/shop/helloasso/directpayment/getformurl", methods={"POST"},options={"acl":{"public","+"}})
+     * Feature UUID : hpf-helloasso-payments-table
+     */
+    public function postHelloAssoDirectPaymentGetFormUrl()
+    {
+        return $this->getService(HelloAssoDirectPaymentController::class)->postHelloAssoDirectPaymentGetFormUrl();
     }
 
     /**

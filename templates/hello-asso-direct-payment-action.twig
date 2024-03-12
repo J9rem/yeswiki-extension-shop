@@ -1,0 +1,85 @@
+{#
+ * This file is part of the YesWiki Extension shop.
+ *
+ * Authors : see README.md file that was distributed with this source code.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ * Feature UUID : hpf-receipts-creation
+ *
+ * generate HTML needed to generate pdf for receipts
+ *#}
+
+{{ include_css('tools/shop/styles/helloasso-direct-payment-form.css') }}
+{{ include_javascript('javascripts/vendor/vue/vue.js') }}
+{{ include_javascript('tools/shop/javascripts/helloasso-direct-payment-form.js',false,true) }}
+ 
+<div class="helloasso-direct-payment-form">
+    <div class="app" data-args="{{ args|json_encode}}" style="display:none;">
+        <div class="header-for-form">
+            {{ _t('SHOP_HELLOASSO_DIRECT_PAYMENT_HEADER',{
+                sum:"#{args.totalAmount // 100 },#{(args.totalAmount % 100) < 10 ? '0' : ''}#{args.totalAmount % 100} €" 
+            })|nl2br }}
+        </div>
+        <div class="alert alert-danger" v-if="error">
+            {{ _t('SHOP_HELLOASSO_DIRECT_PAYMENT_ERROR') }}
+        </div>
+        <div class="row-fluid row" v-else-if="!isLoading">
+          {% for data in [
+            {subType:'text',varName:'firstName', pattern: '[a-zA-ZÀ-ÿ][a-zA-ZÀ-ÿ0-9\\-\' ]+'},
+            {subType:'text',varName:'lastName', pattern: '[a-zA-ZÀ-ÿ][a-zA-ZÀ-ÿ0-9\\-\' ]+'},
+            {
+                subType:'text',
+                varName:'birthDate',
+                pattern: '((0[1-9]|[1-2][0-9])/(0[1-9]|1[1-2])|(30/(04|06|09|11))|(3[0-1]/(01|03|05|07|08|10|12)))/(19[0-9]{2}|20[0-9]{2})',
+                notLocal: true,
+                placeholder: 'ex. : 30/11/1990'
+            },
+            {subType:'text',varName:'address', pattern: '[a-zA-ZÀ-ÿ0-9\\-\' ,]+', notLocal: true},
+            {subType:'text',varName:'zipCode', pattern: '([0-9]{5}|2[A-B][0-9]{3})'},
+            {subType:'text',varName:'city', pattern: '[a-zA-ZÀ-ÿ][a-zA-ZÀ-ÿ0-9\\-\' ]+'},
+            {subType:'text',varName:'country', fixed: true},
+            {subType:'email',varName:'email', fixed: true},
+          ] %}
+            <div class="col-md-12">
+                {% set field = {
+                    type:'test',
+                    subType:data.subType,
+                    label: _t('SHOP_HELLOASSO_DIRECT_PAYMENT_INPUT_' ~ data.varName|upper),
+                    required: not data.fixed,
+                    hint: (data.notLocal is same as true)
+                        ? _t('SHOP_HELLOASSO_DIRECT_PAYMENT_NOT_STORED_DATA')
+                        : (
+                            data.fixed
+                            ? _t('SHOP_HELLOASSO_DIRECT_PAYMENT_FIXED_DATA')
+                            : ''
+                        )} %}
+                {% set propName = 'text' %}
+                {% embed "@bazar/layouts/input.twig" %}
+                    {% block input %}
+                        <input
+                            type="text"
+                            class="form-control input-xxlarge"
+                            :class="{invalid:invalidPayersKeys.includes('{{data.varName}}')}"
+                            v-model="payer.{{data.varName}}"
+                            @invalid="toggleValidity('{{data.varName}}',true)"
+                            {% if data.fixed %}disabled{% else %}:disabled="refreshing || isLoading"{% endif %}
+                            {% if data.pattern %}pattern="{{ data.pattern }}"{% endif %}
+                            {% if data.placeholder %}placeholder="{{ data.placeholder }}"{% endif %}
+                        >
+                    {% endblock %}
+                {% endembed %}
+            </div>
+          {% endfor %}
+            <div class="col-md-12">
+                <div class="control-group form-group input-button-form" >
+                    <div class="controls col-sm-9">
+                        <button class="btn btn-primary" :disabled="refreshing || invalidPayersKeys.length > 0" @click.prevent.stop="pay">
+                            <i class="fas fa-euro-sign"></i> {{ _t('SHOP_HELLOASSO_DIRECT_PAYMENT_PAY') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -23,8 +23,8 @@ class HelloAssoDirectPaymentAction extends YesWikiAction
 
     protected function formatString(array $arg, string $key): string
     {
-        return (!empty($arg[$key]) && is_string($arg[$key]))
-            ? $arg[$key]
+        return (!empty($arg[$key]) && is_scalar($arg[$key]))
+            ? strval($arg[$key])
             : '';
     }
 
