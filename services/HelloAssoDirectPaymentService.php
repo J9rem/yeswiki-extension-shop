@@ -30,14 +30,14 @@ class HelloAssoDirectPaymentService
     /**
      * generate a new token and save it in sessions
      * clean to old tokens (more than 10 minutes)
-     * @param array $args
+     * @param HelloAssoDirectPaymentData $data
      * @return string $token
      */
-    public function getUpdatedToken(array $args): string
+    public function getUpdatedToken(HelloAssoDirectPaymentData $data): string
     {
         $this->cleanPreviousTokens();
-        $passwordHasher = $this->getPasswordHasher();
-        $plainText = $this->getPlainTextFromArgs($args);
+        $passwordHasher = $this->getPasswordHasher($data);
+        $plainText = $this->getPlainTextFromArgs($data);
         $timeStamp = time();
         $hash = $passwordHasher->hash($plainText.$timeStamp);
         if (empty($_SESSION['helloAssoDirectPaymentToken'])){
@@ -49,38 +49,39 @@ class HelloAssoDirectPaymentService
     /**
      * check token
      * clean to old tokens (more than 10 minutes)
-     * @param array $args
+     * @param HelloAssoDirectPaymentData $data
      * @param string $token
      * @return bool
      */
-    public function checkToken(array $args, string $token): bool
+    public function checkToken(HelloAssoDirectPaymentData $data, string $token): bool
     {
         $this->cleanPreviousTokens();
         if (empty($_SESSION['helloAssoDirectPaymentToken'][$token])){
             return false;
         }
         
-        $passwordHasher = $this->getPasswordHasher();
-        $plainText = $this->getPlainTextFromArgs($args);
+        $passwordHasher = $this->getPasswordHasher($data);
+        $plainText = $this->getPlainTextFromArgs($data);
         $regiteredTimeStamp = $_SESSION['helloAssoDirectPaymentToken'][$token];
         return $passwordHasher->verify($token, $plainText.$regiteredTimeStamp);
     }
 
     /**
      * get password hasher
+     * @param HelloAssoDirectPaymentData $data
      * @return PasswordHasherInterface
      */
-    protected function getPasswordHasher():PasswordHasherInterface
+    protected function getPasswordHasher(HelloAssoDirectPaymentData $data):PasswordHasherInterface
     {
-        return $this->passwordHasherFactory->getPasswordHasher(new HelloAssoDirectPaymentData());
+        return $this->passwordHasherFactory->getPasswordHasher($data);
     }
 
     /**
      * extract plain Text data from args
-     * @param array $args
+     * @param HelloAssoDirectPaymentData $incomingData
      * @return string
      */
-    protected function getPlainTextFromArgs(array $args): string
+    protected function getPlainTextFromArgs(HelloAssoDirectPaymentData $incomingData): string
     {
         $data = [];
         foreach([
@@ -88,12 +89,12 @@ class HelloAssoDirectPaymentService
             'totalAmount',
             'containsDonation',
             'itemName',
-            'shop backUrl',
-            'shop errorUrl',
-            'shop returnUrl',
+            'backUrl',
+            'errorUrl',
+            'returnUrl',
             'meta'
         ] as $key){
-            $data[$key] = $args[$key] ?? '';
+            $data[$key] = $incomingData[$key] ?? '';
         }
         return json_encode($data);
     }

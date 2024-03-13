@@ -81,8 +81,14 @@ let appParams = {
                         containsDonation: this.args?.containsDonation ?? false
                     }
                 )
+                .finally(()=>{
+                    this.refreshing = false
+                })
                 .then((data)=>{
-                    console.log({data})
+                    if (!(data?.redirectUrl?.length > 0)){
+                        throw new Error(`data does not have redirect url : ${JSON.stringify(data)}`);
+                    }
+                    window.location = data.redirectUrl
                 })
                 .catch((error)=>{
                     this.error = true
@@ -90,8 +96,6 @@ let appParams = {
                     if (this.args?.['shop errorUrl'].length > 0){
                         // window.location = this.args['shop errorUrl']
                     }
-                }).finally(()=>{
-                    this.refreshing = false
                 })
             }
         },
