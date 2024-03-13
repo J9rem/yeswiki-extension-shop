@@ -339,7 +339,7 @@ class HelloAssoService implements PaymentSystemServiceInterface
                 "&refresh_token={$triple['value']['refreshToken']}".
                 "&grant_type=refresh_token";
             $data = $this->getRouteApi($url, "api refresh token", true, $postData, false);
-            if (empty($data) || empty($data['access_token'] || empty($data['refresh_token']))) {
+            if (empty($data) || empty($data['access_token']) || empty($data['refresh_token'])) {
                 throw new Exception("Token not generated");
             }
             $newValue = [
