@@ -22,8 +22,7 @@ class HelloAssoDirectPaymentService
 
     public function __construct(
         PasswordHasherFactory $passwordHasherFactory
-    )
-    {
+    ) {
         $this->passwordHasherFactory = $passwordHasherFactory;
     }
 
@@ -40,7 +39,7 @@ class HelloAssoDirectPaymentService
         $plainText = $this->getPlainTextFromArgs($data);
         $timeStamp = time();
         $hash = $passwordHasher->hash($plainText.$timeStamp);
-        if (empty($_SESSION['helloAssoDirectPaymentToken'])){
+        if (empty($_SESSION['helloAssoDirectPaymentToken'])) {
             $_SESSION['helloAssoDirectPaymentToken'] = [];
         }
         $_SESSION['helloAssoDirectPaymentToken'][$hash] = $timeStamp;
@@ -56,7 +55,7 @@ class HelloAssoDirectPaymentService
     public function checkToken(HelloAssoDirectPaymentData $data, string $token): bool
     {
         $this->cleanPreviousTokens();
-        if (empty($_SESSION['helloAssoDirectPaymentToken'][$token])){
+        if (empty($_SESSION['helloAssoDirectPaymentToken'][$token])) {
             return false;
         }
         
@@ -93,7 +92,7 @@ class HelloAssoDirectPaymentService
             'errorUrl',
             'returnUrl',
             'meta'
-        ] as $key){
+        ] as $key) {
             $data[$key] = $incomingData[$key] ?? '';
         }
         return json_encode($data);
@@ -113,7 +112,7 @@ class HelloAssoDirectPaymentService
 
         $tokens = array_filter(
             $tokens,
-            function ($timestamp, $token) use($currentTimeStamp){
+            function ($timestamp, $token) use ($currentTimeStamp) {
                 return !empty($token)
                     && is_string($token)
                     && is_int($timestamp) && ($timestamp > ($currentTimeStamp - 600));
@@ -121,7 +120,7 @@ class HelloAssoDirectPaymentService
             ARRAY_FILTER_USE_BOTH
         );
 
-        if (empty($tokens) && isset($_SESSION['helloAssoDirectPaymentToken'])){
+        if (empty($tokens) && isset($_SESSION['helloAssoDirectPaymentToken'])) {
             unset($_SESSION['helloAssoDirectPaymentToken']);
         } else {
             $_SESSION['helloAssoDirectPaymentToken'] = $tokens;

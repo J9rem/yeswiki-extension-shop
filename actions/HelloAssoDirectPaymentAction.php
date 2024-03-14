@@ -31,7 +31,7 @@ class HelloAssoDirectPaymentAction extends YesWikiAction
 
     public function run()
     {
-        return $this->render('@templates/alert-message.twig',[
+        return $this->render('@templates/alert-message.twig', [
             'type' => 'warning',
             'message' => 'Action en cours de conception'
         ]);

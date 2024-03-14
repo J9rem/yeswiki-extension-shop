@@ -9,14 +9,14 @@
  * file that was distributed with this source code.
  * Feature UUID : hpf-helloasso-payments-table
  */
- 
+
 namespace YesWiki\Shop\Entity;
 
 use ArrayAccess;
 use JsonSerializable ;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherAwareInterface;
 
-class HelloAssoDirectPaymentData implements PasswordHasherAwareInterface, ArrayAccess, JsonSerializable 
+class HelloAssoDirectPaymentData implements PasswordHasherAwareInterface, ArrayAccess, JsonSerializable
 {
     public const FIRST_LEVEL_KEYS = [
         'totalAmount',
@@ -56,8 +56,7 @@ class HelloAssoDirectPaymentData implements PasswordHasherAwareInterface, ArrayA
         string $payerzipCode,
         string $payercountry,
         string $meta,
-    )
-    {
+    ) {
         $this->container = [];
         foreach (self::FIRST_LEVEL_KEYS as $key) {
             $this->container[$key] = $$key;
@@ -119,7 +118,7 @@ class HelloAssoDirectPaymentData implements PasswordHasherAwareInterface, ArrayA
                 'payer' => array_merge(
                     $this->container['payer'],
                     [
-                        'country' => strtoupper(substr($this->container['payer']['country'],0,3))
+                        'country' => strtoupper(substr($this->container['payer']['country'], 0, 3))
                     ],
                 )
             ]

@@ -45,9 +45,9 @@ class HelloAssoService implements PaymentSystemServiceInterface
     {
         $this->params = $params;
         $this->baseUrl = (
-                !empty($this->params->get('shop')['helloAsso']['useSandbox'])
-                && in_array($this->params->get('shop')['helloAsso']['useSandbox'],[true,'true',1,'1'],true)
-            )
+            !empty($this->params->get('shop')['helloAsso']['useSandbox'])
+                && in_array($this->params->get('shop')['helloAsso']['useSandbox'], [true,'true',1,'1'], true)
+        )
             ? self::BASEURL_FOR_SANDBOX
             : self::BASEURL_FOR_PROD;
         $this->organizationSlug = null;
@@ -98,14 +98,13 @@ class HelloAssoService implements PaymentSystemServiceInterface
      * @return mixed $resul
      */
     private function getRouteApi(
-        string $url, 
-        string $type, 
-        bool $isPost = false, 
-        $postData = [], 
+        string $url,
+        string $type,
+        bool $isPost = false,
+        $postData = [],
         bool $withBearer = true,
         array $additionalHeaders = []
-        )
-    {
+    ) {
         $headers = array_filter(
             $additionalHeaders,
             function ($h) {
@@ -114,7 +113,7 @@ class HelloAssoService implements PaymentSystemServiceInterface
         );
         if ($withBearer) {
             $this->loadApi();
-            array_unshift($headers,"Authorization: Bearer {$this->token['access_token']}");
+            array_unshift($headers, "Authorization: Bearer {$this->token['access_token']}");
         }
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -137,14 +136,14 @@ class HelloAssoService implements PaymentSystemServiceInterface
             throw new Exception("Error when getting $type via API : $error (httpcode: $httpCode)");
         }
         try {
-            if (empty($results)){
+            if (empty($results)) {
                 throw new Exception("Empty result when getting '$url' for '$type'");
             }
             $output = json_decode($results, true, 512, JSON_THROW_ON_ERROR);
         } catch (Throwable $th) {
-            throw new Exception("Json Decode Error : {$th->getMessage()}".($th->getCode() == 4 ? " ; output : '".strval($results)."'": ''), $th->getCode(),$th);
+            throw new Exception("Json Decode Error : {$th->getMessage()}".($th->getCode() == 4 ? " ; output : '".strval($results)."'": ''), $th->getCode(), $th);
         }
-        if (is_null($output)){
+        if (is_null($output)) {
             throw new Exception('Output is not json '.strval($results));
         }
         return $output;
@@ -226,9 +225,9 @@ class HelloAssoService implements PaymentSystemServiceInterface
         if (!empty($options['to'])) {
             $queries['to'] = $options['to'];
         }
-        $query = empty($queries) ? '' : '?'.implode('&',array_map(function($k) use($queries){
+        $query = empty($queries) ? '' : '?'.implode('&', array_map(function ($k) use ($queries) {
             return "$k={$queries[$k]}";
-        },array_keys($queries)));
+        }, array_keys($queries)));
         $this->updateLastCallTimeStamp();
         $results = $this->getRouteApi($url.$query, "payments");
         
@@ -261,7 +260,7 @@ class HelloAssoService implements PaymentSystemServiceInterface
         $this->loadApi();
         $this->updateLastCallTimeStamp();
         $result = $this->getRouteApi("{$this->baseUrl}v5/payments/$id", "payment");
-        if (empty($result) || !is_array($result) || empty($result['payer'])){
+        if (empty($result) || !is_array($result) || empty($result['payer'])) {
             return null;
         }
         
@@ -445,11 +444,11 @@ class HelloAssoService implements PaymentSystemServiceInterface
             $newData['amount'] = floatval($payment['amount'] ?? 0)/100;
             $newData['date'] = $payment['date'];
             $newData['payer'] = $this->convertToUser($payment['payer']);
-            if (!empty($payment['order'])){
-                if(!empty($payment['order']['formSlug'])){
+            if (!empty($payment['order'])) {
+                if(!empty($payment['order']['formSlug'])) {
                     $newData['formSlug'] = $payment['order']['formSlug'];
                 }
-                if (!empty($payment['order']['formType'])){
+                if (!empty($payment['order']['formType'])) {
                     $newData['formType'] = $payment['order']['formType'];
                 }
             }

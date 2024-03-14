@@ -46,8 +46,8 @@ class HelloAssoDirectPaymentController extends YesWikiController
     public function postHelloAssoDirectPaymentGetFormUrl(): ApiResponse
     {
         list('data' => $data, 'token' => $token) = $this->getDataFromPost();
-        if (!$this->helloAssoDirectPaymentService->checkToken($data, $token)){
-            return new ApiResponse(['error'=>'Data have been corrupted !'],Response::HTTP_FORBIDDEN);
+        if (!$this->helloAssoDirectPaymentService->checkToken($data, $token)) {
+            return new ApiResponse(['error'=>'Data have been corrupted !'], Response::HTTP_FORBIDDEN);
         }
 
         list(
@@ -71,14 +71,14 @@ class HelloAssoDirectPaymentController extends YesWikiController
     protected function getDataFromPost(): array
     {
         foreach (['token','itemName','backUrl','errorUrl','returnUrl','containsDonation','totalAmount', 'meta'] as $key) {
-            if (empty($_POST[$key]) || !is_string($_POST[$key])){
+            if (empty($_POST[$key]) || !is_string($_POST[$key])) {
                 throw new Exception("\$_POST['$key'] should not be empty !");
             }
         }
-        if (!in_array($_POST['containsDonation'],[true,false,'true','false',1,0],true)){
+        if (!in_array($_POST['containsDonation'], [true,false,'true','false',1,0], true)) {
             throw new Exception("\$_POST['containsDonation'] should be a boolean !");
         }
-        if (empty($_POST['payer']) || !is_array($_POST['payer'])){
+        if (empty($_POST['payer']) || !is_array($_POST['payer'])) {
             throw new Exception("\$_POST['payer'] should be an array !");
         }
         foreach ([
@@ -91,12 +91,12 @@ class HelloAssoDirectPaymentController extends YesWikiController
             'lastName',
             'zipCode'
         ] as $key) {
-            if (empty($_POST['payer'][$key]) || !is_scalar($_POST['payer'][$key])){
+            if (empty($_POST['payer'][$key]) || !is_scalar($_POST['payer'][$key])) {
                 throw new Exception("\$_POST['payer'][$key] should not be empty !");
             }
         }
-        $birthDate = DateTimeImmutable::createFromFormat('d/m/Y',$_POST['payer']['birthDate']);
-        if ($birthDate === false){
+        $birthDate = DateTimeImmutable::createFromFormat('d/m/Y', $_POST['payer']['birthDate']);
+        if ($birthDate === false) {
             throw new Exception("\$_POST['payer']['birthDate'] is not a date ({$_POST['payer']['birthDate']}) !");
         }
         
@@ -107,7 +107,7 @@ class HelloAssoDirectPaymentController extends YesWikiController
                 strval($_POST['backUrl']),
                 strval($_POST['errorUrl']),
                 strval($_POST['returnUrl']),
-                in_array($_POST['containsDonation'],[true,'true',1],true),
+                in_array($_POST['containsDonation'], [true,'true',1], true),
                 strval($_POST['payer']['firstName']),
                 strval($_POST['payer']['lastName']),
                 strval($_POST['payer']['email']),
