@@ -55,7 +55,7 @@ class HelloAssoDirectPaymentData implements PasswordHasherAwareInterface, ArrayA
         string $payercity,
         string $payerzipCode,
         string $payercountry,
-        string $meta,
+        string $meta
     ) {
         $this->container = [];
         foreach (self::FIRST_LEVEL_KEYS as $key) {
