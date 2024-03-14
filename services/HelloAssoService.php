@@ -16,6 +16,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 use YesWiki\Core\Service\TripleStore;
+use YesWiki\Shop\Entity\HelloAssoDirectPaymentData;
 use YesWiki\Shop\Entity\HelloAssoPayments;
 use YesWiki\Shop\Entity\Payment;
 use YesWiki\Shop\Entity\PaymentsInterface;
@@ -27,8 +28,9 @@ use YesWiki\Wiki;
 
 class HelloAssoService implements PaymentSystemServiceInterface
 {
-    private const SANDBOX_MODE = false;
     private const PARAMS_NAMES = ['clientId', 'clientApiKey'];
+    public const BASEURL_FOR_PROD = 'https://api.helloasso.com/';
+    public const BASEURL_FOR_SANDBOX = 'https://api.helloasso-sandbox.com/';
     public const TRIPLE_RESOURCE = 'helloAsso';
     public const TRIPLE_PROPERTY= 'https://yeswiki.net/vocabulary/helloassodata';
 
@@ -42,7 +44,12 @@ class HelloAssoService implements PaymentSystemServiceInterface
     public function __construct(ParameterBagInterface $params, TripleStore $tripleStore, Wiki $wiki)
     {
         $this->params = $params;
-        $this->baseUrl = self::SANDBOX_MODE ? "https://api.helloasso-rc.com/" : "https://api.helloasso.com/";
+        $this->baseUrl = (
+                !empty($this->params->get('shop')['helloAsso']['useSandbox'])
+                && in_array($this->params->get('shop')['helloAsso']['useSandbox'],[true,'true',1,'1'],true)
+            )
+            ? self::BASEURL_FOR_SANDBOX
+            : self::BASEURL_FOR_PROD;
         $this->organizationSlug = null;
         $this->token = null;
         $this->tripleStore = $tripleStore;
@@ -87,15 +94,27 @@ class HelloAssoService implements PaymentSystemServiceInterface
      * @param string $type
      * @param bool $isPost optionnal
      * @param array|string $postData optionnal
+     * @param array $additionalHeaders optionnal
      * @return mixed $resul
      */
-    private function getRouteApi(string $url, string $type, bool $isPost = false, $postData = [], bool $withBearer = true)
+    private function getRouteApi(
+        string $url, 
+        string $type, 
+        bool $isPost = false, 
+        $postData = [], 
+        bool $withBearer = true,
+        array $additionalHeaders = []
+        )
     {
+        $headers = array_filter(
+            $additionalHeaders,
+            function ($h) {
+                return !empty($h) && is_string($h);
+            }
+        );
         if ($withBearer) {
             $this->loadApi();
-            $headers = [
-                "Authorization: Bearer {$this->token['access_token']}",
-            ];
+            array_unshift($headers,"Authorization: Bearer {$this->token['access_token']}");
         }
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -103,7 +122,7 @@ class HelloAssoService implements PaymentSystemServiceInterface
         if ($isPost && !empty($postData) && (is_string($postData) || is_array($postData))) {
             curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
         }
-        if ($withBearer) {
+        if (!empty($headers)) {
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         }
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
@@ -251,6 +270,42 @@ class HelloAssoService implements PaymentSystemServiceInterface
     }
 
     /**
+     * init a checkout
+     * @param HelloAssoDirectPaymentData $incomingData
+     * @return array [
+     *  'id' => integer,
+     *  'redirectUrl' =>string
+     * ]
+     * @throws Exception
+     */
+    public function initACheckout(HelloAssoDirectPaymentData $incomingData): array
+    {
+        if (!$this->canCheckApi()) {
+            throw new Exception('Not possible to init Api');
+        }
+        $this->loadApi();
+        $this->updateLastCallTimeStamp();
+        $postData = json_encode($incomingData);
+        $data = $this->getRouteApi(
+            "{$this->baseUrl}v5/organizations/{$this->getOrganizationSlug()}/checkout-intents",
+            "checkout intent",
+            true,
+            $postData,
+            true, // use Bearer
+            [
+                'Content-Type: application/json'
+            ]
+        );
+        if (empty($data) || empty($data['redirectUrl']) || empty($data['id'])) {
+            throw new Exception("Redirect Url not generated : ".json_encode($data). ' for '.$postData);
+        }
+        return [
+            'id' => $data['id'],
+            'redirectUrl' => $data['redirectUrl']
+        ];
+    }
+
+    /**
      * get token from api
      * @return array $token
      */
@@ -268,7 +323,7 @@ class HelloAssoService implements PaymentSystemServiceInterface
                 "&client_secret={$this->params->get('shop')['helloAsso']['clientApiKey']}".
                 "&grant_type=client_credentials";
             $data = $this->getRouteApi($url, "api token", true, $postData, false);
-            if (empty($data) || empty($data['access_token'] || empty($data['refresh_token']))) {
+            if (empty($data) || empty($data['access_token']) || empty($data['refresh_token'])) {
                 throw new Exception("Token not generated");
             }
             $newValue = [
@@ -284,7 +339,7 @@ class HelloAssoService implements PaymentSystemServiceInterface
                 "&refresh_token={$triple['value']['refreshToken']}".
                 "&grant_type=refresh_token";
             $data = $this->getRouteApi($url, "api refresh token", true, $postData, false);
-            if (empty($data) || empty($data['access_token'] || empty($data['refresh_token']))) {
+            if (empty($data) || empty($data['access_token']) || empty($data['refresh_token'])) {
                 throw new Exception("Token not generated");
             }
             $newValue = [

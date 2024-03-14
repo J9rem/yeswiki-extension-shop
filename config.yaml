@@ -18,6 +18,7 @@ parameters:
         - organizationSlug
         - postApiToken
         - minTimeBetweenCalls
+        - useSandbox
 
 services:
   _defaults:
