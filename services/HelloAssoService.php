@@ -196,11 +196,12 @@ class HelloAssoService implements PaymentSystemServiceInterface
     /**
      * get payments via hello asso
      * @param array $options
+     * @param bool $canForceMinTime
      * @return HelloAssoPayments|null $payments
      */
-    public function getPayments(array $options): ?PaymentsInterface
+    public function getPayments(array $options, bool $canForceMinTime = false): ?PaymentsInterface
     {
-        if (!$this->canCheckApi()) {
+        if (!$canForceMinTime && !$this->canCheckApi()) {
             return null;
         }
         $options = array_merge(['states' => ["Authorized"]], $options);
@@ -430,7 +431,7 @@ class HelloAssoService implements PaymentSystemServiceInterface
         $user->address = $data['address'] ?? null;
         $user->postalCode = $data['zipCode'] ?? null;
         $user->town = $data['city'] ?? null;
-        $user->countryOfResidence = $data['firstName'] ?? null;
+        $user->countryOfResidence = $data['countryOfResidence'] ?? null;
         return $user;
     }
 
