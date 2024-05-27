@@ -32,7 +32,7 @@ class HelloAssoService implements PaymentSystemServiceInterface
     public const BASEURL_FOR_PROD = 'https://api.helloasso.com/';
     public const BASEURL_FOR_SANDBOX = 'https://api.helloasso-sandbox.com/';
     public const TRIPLE_RESOURCE = 'helloAsso';
-    public const TRIPLE_PROPERTY= 'https://yeswiki.net/vocabulary/helloassodata';
+    public const TRIPLE_PROPERTY = 'https://yeswiki.net/vocabulary/helloassodata';
 
     protected $params;
     private $baseUrl;
@@ -141,10 +141,10 @@ class HelloAssoService implements PaymentSystemServiceInterface
             }
             $output = json_decode($results, true, 512, JSON_THROW_ON_ERROR);
         } catch (Throwable $th) {
-            throw new Exception("Json Decode Error : {$th->getMessage()}".($th->getCode() == 4 ? " ; output : '".strval($results)."'": ''), $th->getCode(), $th);
+            throw new Exception("Json Decode Error : {$th->getMessage()}" . ($th->getCode() == 4 ? " ; output : '" . strval($results) . "'" : ''), $th->getCode(), $th);
         }
         if (is_null($output)) {
-            throw new Exception('Output is not json '.strval($results));
+            throw new Exception('Output is not json ' . strval($results));
         }
         return $output;
     }
@@ -178,7 +178,7 @@ class HelloAssoService implements PaymentSystemServiceInterface
     public function getForms(): array
     {
         $this->loadApi();
-        $url = $this->baseUrl."v5/organizations/{$this->getOrganizationSlug()}/forms";
+        $url = $this->baseUrl . "v5/organizations/{$this->getOrganizationSlug()}/forms";
         $forms = [];
         do {
             $results = $this->getRouteApi($url, "forms");
@@ -188,7 +188,7 @@ class HelloAssoService implements PaymentSystemServiceInterface
             $pageIndex = $results['pagination']['pageIndex'];
             $totalPages = $results['pagination']['totalPages'];
             $continuationToken = $results['pagination']['continuationToken'];
-            $url = $this->baseUrl."v5/organizations/{$this->getOrganizationSlug()}/forms?continuationToken={$continuationToken}";
+            $url = $this->baseUrl . "v5/organizations/{$this->getOrganizationSlug()}/forms?continuationToken={$continuationToken}";
         } while ($pageIndex < $totalPages);
         return $forms;
     }
@@ -207,9 +207,9 @@ class HelloAssoService implements PaymentSystemServiceInterface
         $options = array_merge(['states' => ["Authorized"]], $options);
         $this->loadApi();
         if (!empty($options['formType']) && !empty($options['formSlug'])) {
-            $url = $this->baseUrl."v5/organizations/{$this->getOrganizationSlug()}/forms/{$options['formType']}/{$options['formSlug']}/payments";
+            $url = $this->baseUrl . "v5/organizations/{$this->getOrganizationSlug()}/forms/{$options['formType']}/{$options['formSlug']}/payments";
         } else {
-            $url = $this->baseUrl."v5/organizations/{$this->getOrganizationSlug()}/payments";
+            $url = $this->baseUrl . "v5/organizations/{$this->getOrganizationSlug()}/payments";
         }
         $queries = [];
         if (!empty($options['email'])) {
@@ -226,12 +226,12 @@ class HelloAssoService implements PaymentSystemServiceInterface
         if (!empty($options['to'])) {
             $queries['to'] = $options['to'];
         }
-        $query = empty($queries) ? '' : '?'.implode('&', array_map(function ($k) use ($queries) {
+        $query = empty($queries) ? '' : '?' . implode('&', array_map(function ($k) use ($queries) {
             return "$k={$queries[$k]}";
         }, array_keys($queries)));
         $this->updateLastCallTimeStamp();
-        $results = $this->getRouteApi($url.$query, "payments");
-        
+        $results = $this->getRouteApi($url . $query, "payments");
+
         $pageIndex = isset($results['pagination']) && isset($results['pagination']['pageIndex']) && is_scalar($results['pagination']['pageIndex'])
             ? intval($results['pagination']['pageIndex'])
             : 1;
@@ -264,8 +264,8 @@ class HelloAssoService implements PaymentSystemServiceInterface
         if (empty($result) || !is_array($result) || empty($result['payer'])) {
             return null;
         }
-        
-        $payments = $this->convertToPayments(['data'=>[$result]]);
+
+        $payments = $this->convertToPayments(['data' => [$result]]);
         return $payments[0] ?? null;
     }
 
@@ -297,7 +297,7 @@ class HelloAssoService implements PaymentSystemServiceInterface
             ]
         );
         if (empty($data) || empty($data['redirectUrl']) || empty($data['id'])) {
-            throw new Exception("Redirect Url not generated : ".json_encode($data). ' for '.$postData);
+            throw new Exception("Redirect Url not generated : " . json_encode($data) . ' for ' . $postData);
         }
         return [
             'id' => $data['id'],
@@ -318,9 +318,9 @@ class HelloAssoService implements PaymentSystemServiceInterface
                 empty($triple['value']['refreshTokenExpireTimeStamp']) ||
                 empty($triple['value']['accessTokenExpireTimeStamp']) ||
                 $triple['value']['refreshTokenExpireTimeStamp'] < time()) {
-            $url = $this->baseUrl."oauth2/token";
-            $postData = "client_id={$this->params->get('shop')['helloAsso']['clientId']}".
-                "&client_secret={$this->params->get('shop')['helloAsso']['clientApiKey']}".
+            $url = $this->baseUrl . "oauth2/token";
+            $postData = "client_id={$this->params->get('shop')['helloAsso']['clientId']}" .
+                "&client_secret={$this->params->get('shop')['helloAsso']['clientApiKey']}" .
                 "&grant_type=client_credentials";
             $data = $this->getRouteApi($url, "api token", true, $postData, false);
             if (empty($data) || empty($data['access_token']) || empty($data['refresh_token'])) {
@@ -329,14 +329,14 @@ class HelloAssoService implements PaymentSystemServiceInterface
             $newValue = [
                 'refreshToken' => strval($data['refresh_token']),
                 'accessToken' => strval($data['access_token']),
-                'accessTokenExpireTimeStamp' => time()+intval($data['expires_in'])-120, // margin of 2 minutes
-                'refreshTokenExpireTimeStamp' => time()+29*24*3600, // 29 days
+                'accessTokenExpireTimeStamp' => time() + intval($data['expires_in']) - 120, // margin of 2 minutes
+                'refreshTokenExpireTimeStamp' => time() + 29 * 24 * 3600, // 29 days
             ];
             $data = $this->saveTriple($triple, $newValue);
         } elseif ($triple['value']['accessTokenExpireTimeStamp'] < time()) {
-            $url = $this->baseUrl."oauth2/token";
-            $postData = "client_id={$this->params->get('shop')['helloAsso']['clientId']}".
-                "&refresh_token={$triple['value']['refreshToken']}".
+            $url = $this->baseUrl . "oauth2/token";
+            $postData = "client_id={$this->params->get('shop')['helloAsso']['clientId']}" .
+                "&refresh_token={$triple['value']['refreshToken']}" .
                 "&grant_type=refresh_token";
             $data = $this->getRouteApi($url, "api refresh token", true, $postData, false);
             if (empty($data) || empty($data['access_token']) || empty($data['refresh_token'])) {
@@ -345,8 +345,8 @@ class HelloAssoService implements PaymentSystemServiceInterface
             $newValue = [
                 'refreshToken' => strval($data['refresh_token']),
                 'accessToken' => strval($data['access_token']),
-                'accessTokenExpireTimeStamp' => time()+intval($data['expires_in'])-120, // margin of 2 minutes
-                'refreshTokenExpireTimeStamp' => time()+29*24*3600, // 29 days
+                'accessTokenExpireTimeStamp' => time() + intval($data['expires_in']) - 120, // margin of 2 minutes
+                'refreshTokenExpireTimeStamp' => time() + 29 * 24 * 3600, // 29 days
             ];
             $data = $this->saveTriple($triple, $newValue);
         } else {
@@ -385,7 +385,7 @@ class HelloAssoService implements PaymentSystemServiceInterface
             } else {
                 $this->createTripleValue($value);
             }
-            return $this->getExistingToken(['value'=>$value], true);
+            return $this->getExistingToken(['value' => $value], true);
         } catch (NotUpdatedTripleException $th) {
             $tokenData = $this->getTripleValue();
             if (!empty($tokenData)) {
@@ -409,7 +409,7 @@ class HelloAssoService implements PaymentSystemServiceInterface
             if (!empty($this->params->get('shop')['helloAsso']['organizationSlug'])) {
                 $this->organizationSlug = $this->params->get('shop')['helloAsso']['organizationSlug'];
             } else {
-                $url = $this->baseUrl."v5/users/me/organizations";
+                $url = $this->baseUrl . "v5/users/me/organizations";
                 $organizations = $this->getRouteApi($url, "organizations");
                 if (empty($organizations) || !is_array($organizations)) {
                     throw new Exception("Error when getting organizations");
@@ -442,7 +442,7 @@ class HelloAssoService implements PaymentSystemServiceInterface
             $newData = [];
             $newData['id'] = $payment['id'];
             $newData['status'] = $payment['state'] ?? ($payment['status'] ?? 'unknown') ;
-            $newData['amount'] = floatval($payment['amount'] ?? 0)/100;
+            $newData['amount'] = floatval($payment['amount'] ?? 0) / 100;
             $newData['date'] = $payment['date'];
             $newData['payer'] = $this->convertToUser($payment['payer']);
             if (!empty($payment['order'])) {
@@ -454,6 +454,10 @@ class HelloAssoService implements PaymentSystemServiceInterface
                 }
             }
             $newData['receiptUrl'] = $payment['paymentReceiptUrl'] ?? '';
+            $newData['description'] = $payment['items'][0]['name'] ?? '';
+            if (!is_scalar($newData['description'])) {
+                $newData['description'] = '';
+            }
             $payments[] = new Payment($newData);
         }
         return $payments;

@@ -16,35 +16,37 @@ use JsonSerializable;
 
 class Payment implements JsonSerializable
 {
-    public $id;
-    public $payer;
     public $amount;
-    public $status;
     public $date;
+    public $description;
     public $formSlug;
     public $formType;
+    public $id;
+    public $payer;
     public $receiptUrl;
+    public $status;
 
     public function __construct(array $values)
     {
-        foreach (['id','payer','amount','date','status'] as $key) {
+        foreach (['id','payer','amount','date','status', 'description'] as $key) {
             if (!isset($values[$key])) {
                 throw new Exception("\$values[{$key}] should be set to construct a payment!");
             }
         }
-        foreach (['id','amount','date','status'] as $key) {
+        foreach (['id','amount','date','status', 'description'] as $key) {
             if (!is_scalar($values[$key])) {
                 throw new Exception("\$values[{$key}] should be a scalar to construct a payment!");
             }
         }
         if (!$values['payer'] instanceof User) {
-            throw new Exception("\$values['payer'] should be an instance of ".User::class." to construct a payment!");
+            throw new Exception("\$values['payer'] should be an instance of " . User::class . " to construct a payment!");
         }
 
         $this->id = strval($values['id']);
         $this->payer = $values['payer'];
         $this->amount = floatval($values['amount']);
         $this->status = strval($values['status']);
+        $this->description = strval($values['description']);
         $this->date = strval($values['date']);
         $this->formSlug = !empty($values['formSlug']) ? strval($values['formSlug']) : '';
         $this->formType = !empty($values['formType']) ? strval($values['formType']) : '';
@@ -65,6 +67,7 @@ class Payment implements JsonSerializable
             'formSlug' => $this->formSlug,
             'status' => $this->status,
             'receiptUrl' => $this->receiptUrl,
+            'description' => $this->description,
         ];
     }
     /* === === */
